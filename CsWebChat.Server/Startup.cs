@@ -55,6 +55,12 @@ namespace CsWebChat.Server
                     config.RequireRole("Admin", "User");
                 });
             });
+            services.AddAntiforgery((options) => 
+            {
+                options.Cookie.Name = "AntiforgeryCookie";
+                options.HeaderName = "AntiforgeryHeader";
+                options.FormFieldName = "AntiforgeryFormField";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

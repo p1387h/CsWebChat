@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CsWebChat.Server.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Antiforgery;
 
 namespace CsWebChat.Server.Controllers
 {
@@ -16,14 +17,16 @@ namespace CsWebChat.Server.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly ChatContext db;
+        private readonly ChatContext _db;
+        private readonly IAntiforgery _antiforgery;
 
-        public AuthenticationController(ChatContext db)
+        public AuthenticationController(ChatContext db, IAntiforgery antiforgery)
         {
-            if (db == null)
+            if (db == null || antiforgery == null)
                 throw new ArgumentException();
 
-            this.db = db;
+            this._db = db;
+            this._antiforgery = antiforgery;
         }
 
         // GET: api/Authentication/Denied
@@ -33,11 +36,25 @@ namespace CsWebChat.Server.Controllers
             HttpContext.Response.StatusCode = 401;
         }
 
+        // GET api/Authentication/csrftoken
+        [HttpGet("csrftoken")]
+        public ActionResult CsrfToken()
+        {
+            var tokens = this._antiforgery.GetAndStoreTokens(HttpContext);
+
+            return new ObjectResult(new
+            {
+                headerName = tokens.HeaderName,
+                requestToken = tokens.RequestToken
+            });
+        }
+
         // POST: api/Authentication/Login
         [HttpPost("login")]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login([FromBody] User user)
         {
-            var isInDb = this.db.User
+            var isInDb = this._db.User
                 .Where(x => x.Name.Equals(user.Name) && x.Password.Equals(user.Password))
                 .SingleOrDefault() != null;
 
@@ -71,6 +88,7 @@ namespace CsWebChat.Server.Controllers
 
         // POST: api/Authentication/Logout
         [HttpPost("logout")]
+        [ValidateAntiForgeryToken]
         [Authorize(Policy = "LogoutPolicy")]
         public async Task<ActionResult> Logout()
         {

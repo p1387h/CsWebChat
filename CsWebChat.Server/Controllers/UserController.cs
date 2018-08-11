@@ -10,6 +10,7 @@ namespace CsWebChat.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AutoValidateAntiforgeryToken]
     public class UserController : ControllerBase
     {
         private readonly ChatContext db;
@@ -33,6 +34,7 @@ namespace CsWebChat.Server.Controllers
                 result = Conflict(new { user.Name });
             }
             else
+            {
                 try
                 {
                     this.db.User.Add(user);
@@ -44,6 +46,7 @@ namespace CsWebChat.Server.Controllers
                 {
                     result = BadRequest();
                 }
+            }
 
             return result;
         }
