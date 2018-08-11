@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CsWebChat.Server.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 
 namespace CsWebChat.Server
 {
@@ -38,6 +40,10 @@ namespace CsWebChat.Server
                 options.LoginPath = "/api/authentication/login";
                 options.LogoutPath = "/api/authentication/logout";
                 options.SlidingExpiration = true;
+            });
+            services.AddDbContext<ChatContext>((options) =>
+            {
+                options.UseInMemoryDatabase("ChatDatabase");
             });
         }
 
