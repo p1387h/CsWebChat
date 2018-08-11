@@ -36,14 +36,24 @@ namespace CsWebChat.Server
                 options.Cookie.Name = "AuthenticationCookie";
                 options.Cookie.MaxAge = TimeSpan.FromMinutes(10);
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
-                //options.AccessDeniedPath = "";
-                options.LoginPath = "/api/authentication/login";
+                // Since a request to a [Authorize]d resource without the necessary permissions
+                // causes the middleware to redirect to the login path, a workaround is needed
+                // in order to allow 401 responses to reach the user.
+                options.AccessDeniedPath = "/api/authentication/denied";
+                options.LoginPath = "/api/authentication/denied";
                 options.LogoutPath = "/api/authentication/logout";
                 options.SlidingExpiration = true;
             });
             services.AddDbContext<ChatContext>((options) =>
             {
                 options.UseInMemoryDatabase("ChatDatabase");
+            });
+            services.AddAuthorization((options) => 
+            {
+                options.AddPolicy("LogoutPolicy", (config) => 
+                {
+                    config.RequireRole("Admin", "User");
+                });
             });
         }
 

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CsWebChat.Server.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CsWebChat.Server.Controllers
 {
@@ -23,6 +24,13 @@ namespace CsWebChat.Server.Controllers
                 throw new ArgumentException();
 
             this.db = db;
+        }
+
+        // GET: api/Authentication/Denied
+        [HttpGet("denied")]
+        public void Denied()
+        {
+            HttpContext.Response.StatusCode = 401;
         }
 
         // POST: api/Authentication/Login
@@ -63,6 +71,7 @@ namespace CsWebChat.Server.Controllers
 
         // POST: api/Authentication/Logout
         [HttpPost("logout")]
+        [Authorize(Policy = "LogoutPolicy")]
         public async Task<ActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
