@@ -63,8 +63,9 @@ namespace CsWebChat.Server.Controllers
 
         // POST: api/Authentication/Logout
         [HttpPost("logout")]
-        public ActionResult Logout()
+        public async Task<ActionResult> Logout()
         {
+            await HttpContext.SignOutAsync();
             return new EmptyResult();
         }
     }
