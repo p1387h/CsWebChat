@@ -36,7 +36,7 @@ namespace CsWebChat.Server
                 options.Cookie.Name = "AuthenticationCookie";
                 options.Cookie.MaxAge = TimeSpan.FromMinutes(10);
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
-                options.AccessDeniedPath = "";
+                //options.AccessDeniedPath = "";
                 options.LoginPath = "/api/authentication/login";
                 options.LogoutPath = "/api/authentication/logout";
                 options.SlidingExpiration = true;
