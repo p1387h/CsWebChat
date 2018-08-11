@@ -25,10 +25,12 @@ namespace CsWebChat.Server.Controllers
             this._applicationLifetime = applicationLifetime;
         }
 
-        // POST: api/Status
-        //[HttpPost]
-        // GET: api/Status
-        [HttpGet]
+        // An easy way to completely stop the kestrel server. Should only be accessible
+        // by the admin!
+        // POST: api/Status/Shutdown
+        [HttpPost("shutdown")]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
         public ActionResult ShutdownServer()
         {
             this._applicationLifetime.StopApplication();
