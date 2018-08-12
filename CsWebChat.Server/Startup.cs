@@ -55,7 +55,7 @@ namespace CsWebChat.Server
                     config.RequireRole("Admin", "User");
                 });
             });
-            services.AddAntiforgery((options) => 
+            services.AddAntiforgery((options) =>
             {
                 options.Cookie.Name = "AntiforgeryCookie";
                 options.HeaderName = "AntiforgeryHeader";

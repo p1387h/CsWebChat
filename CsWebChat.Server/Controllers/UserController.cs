@@ -29,7 +29,7 @@ namespace CsWebChat.Server.Controllers
         {
             ActionResult result = null;
 
-            if (this.db.User.Any(x => x.Name.Equals(user.Name)))
+            if (await this.db.User.FindAsync(user.Name) != null)
             {
                 result = Conflict(new { user.Name });
             }
@@ -40,7 +40,7 @@ namespace CsWebChat.Server.Controllers
                     this.db.User.Add(user);
                     await this.db.SaveChangesAsync();
 
-                    result = CreatedAtRoute("GetUserById", new { user.Id }, user);
+                    result = CreatedAtRoute(nameof(GetUserByName), new { user.Name }, user);
                 }
                 catch
                 {
@@ -51,21 +51,21 @@ namespace CsWebChat.Server.Controllers
             return result;
         }
 
-        // GET: api/User/5
-        [HttpGet("{id}", Name = nameof(GetUserById))]
-        public async Task<ActionResult<User>> GetUserById(long id)
+        // GET: api/User/X
+        [HttpGet("{name}", Name = nameof(GetUserByName))]
+        public async Task<ActionResult<User>> GetUserByName(string name)
         {
             ActionResult result;
 
-            if (id < 0)
+            if (String.IsNullOrEmpty(name))
             {
                 result = BadRequest();
             }
             else
             {
-                var user = await this.db.User.FindAsync(id);
-                
-                if(user == null)
+                var user = await this.db.User.FindAsync(name);
+
+                if (user == null)
                 {
                     result = NotFound();
                 }
@@ -78,17 +78,17 @@ namespace CsWebChat.Server.Controllers
             return result;
         }
 
-        // PUT: api/User/5
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Put(long id, [FromBody] User user)
+        // PUT: api/User/X
+        [HttpPut("{name}")]
+        public async Task<ActionResult> Put(string name, [FromBody] User user)
         {
-            if (id < 0 || id != user.Id)
+            if (String.IsNullOrEmpty(name) || !name.Equals(user.Name))
             {
                 return BadRequest();
             }
             else
             {
-                var userDb = await this.db.User.FindAsync(id);
+                var userDb = await this.db.User.FindAsync(name);
                 userDb.Name = user.Name;
                 userDb.Password = user.Password;
 
@@ -97,13 +97,13 @@ namespace CsWebChat.Server.Controllers
             }
         }
 
-        // DELETE: api/User/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(long id)
+        // DELETE: api/User/X
+        [HttpDelete("{name}")]
+        public async Task<ActionResult> Delete(string name)
         {
             ActionResult result = null;
 
-            if (id < 0)
+            if (String.IsNullOrEmpty(name))
             {
                 result = BadRequest();
             }
@@ -111,7 +111,7 @@ namespace CsWebChat.Server.Controllers
             {
                 try
                 {
-                    var user = await this.db.User.FindAsync(id);
+                    var user = await this.db.User.FindAsync(name);
                     this.db.User.Remove(user);
 
                     result = Ok();

@@ -15,7 +15,9 @@ namespace CsWebChat.Server.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<User>()
+                .HasKey("Name")
+                .HasName("PK_Name");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
