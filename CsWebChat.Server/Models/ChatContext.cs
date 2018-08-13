@@ -18,6 +18,16 @@ namespace CsWebChat.Server.Models
             modelBuilder.Entity<User>()
                 .HasKey("Name")
                 .HasName("PK_Name");
+
+            modelBuilder.Entity<Message>()
+                .HasKey("MessageId")
+                .HasName("PK_Message");
+            modelBuilder.Entity<Message>()
+                .HasOne<User>("Sender")
+                .WithMany("MessageSent");
+            modelBuilder.Entity<Message>()
+                .HasOne<User>("Receiver")
+                .WithMany("MessageReceived");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -26,5 +36,6 @@ namespace CsWebChat.Server.Models
         }
 
         public DbSet<User> User { get; set; }
+        public DbSet<Message> Message { get; set; }
     }
 }

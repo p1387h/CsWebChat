@@ -18,5 +18,8 @@ namespace CsWebChat.Server.Models
         [MaxLength(20)]
         [RegularExpression("^[a-zA-Z0-9]{6,20}$")]
         public string Password { get; set; }
+
+        public IList<Message> MessageSent { get; set; }
+        public IList<Message> MessageReceived { get; set; }
     }
 }

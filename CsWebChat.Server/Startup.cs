@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
+using CsWebChat.Server.AuthorizationAttributes;
 
 namespace CsWebChat.Server
 {
@@ -50,7 +51,7 @@ namespace CsWebChat.Server
             });
             services.AddAuthorization((options) => 
             {
-                options.AddPolicy("LogoutPolicy", (config) => 
+                options.AddPolicy("LoggedInPolicy", (config) => 
                 {
                     config.RequireRole("Admin", "User");
                 });

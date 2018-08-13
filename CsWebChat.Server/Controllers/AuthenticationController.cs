@@ -89,7 +89,7 @@ namespace CsWebChat.Server.Controllers
         // POST: api/Authentication/Logout
         [HttpPost("logout")]
         [ValidateAntiForgeryToken]
-        [Authorize(Policy = "LogoutPolicy")]
+        [Authorize(Policy = "LoggedInPolicy")]
         public async Task<ActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
