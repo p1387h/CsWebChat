@@ -32,29 +32,21 @@ namespace CsWebChat.Server.Controllers
         public async Task<ActionResult<Message>> GetMessageById(long id)
         {
             ActionResult result;
+            var messsage = await this._db.Message.FindAsync(id);
+            var validUsers = new Tuple<User, User>(messsage.Sender, messsage.Receiver);
+            var maySeeMessage = await this._authorizationService.AuthorizeAsync(
+                HttpContext.User,
+                validUsers,
+                new MessageAvailabilityRequirement());
 
-            if (id < 0)
+            // Only allow either a receiver or a sender to view their own messages.
+            if (maySeeMessage.Succeeded)
             {
-                result = BadRequest();
+                result = Ok(messsage);
             }
             else
             {
-                var messsage = await this._db.Message.FindAsync(id);
-                var validUsers = new Tuple<User, User>(messsage.Sender, messsage.Receiver);
-                var maySeeMessage = await this._authorizationService.AuthorizeAsync(
-                    HttpContext.User, 
-                    validUsers, 
-                    new MessageAvailabilityRequirement());
-
-                // Only allow either a receiver or a sender to view their own messages.
-                if (maySeeMessage.Succeeded)
-                {
-                    result = Ok(messsage);
-                }
-                else
-                {
-                    result = Forbid();
-                }
+                result = Forbid();
             }
 
             return result;
