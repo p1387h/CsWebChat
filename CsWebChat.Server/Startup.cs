@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using CsWebChat.Server.AuthorizationAttributes;
 using Microsoft.AspNetCore.Authorization;
+using System.Text;
 
 namespace CsWebChat.Server
 {
@@ -82,6 +83,9 @@ namespace CsWebChat.Server
 
             //app.UseHttpsRedirection();
             app.UseAuthentication();
+            app.MapWhen(
+                (context) => { return !context.Request.Path.Value.StartsWith("/api/"); },
+                (config) => { config.Run(async (context) => { await context.Response.Body.WriteAsync(Encoding.ASCII.GetBytes("ERROR")); }); });
             app.UseMvc();
         }
     }
