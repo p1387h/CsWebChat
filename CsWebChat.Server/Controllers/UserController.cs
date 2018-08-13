@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CsWebChat.Server.AuthorizationAttributes;
 using CsWebChat.Server.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,13 +16,15 @@ namespace CsWebChat.Server.Controllers
     public class UserController : ControllerBase
     {
         private readonly ChatContext db;
+        private readonly IAuthorizationService _authorizationService;
 
-        public UserController(ChatContext db)
+        public UserController(ChatContext db, IAuthorizationService authorizationService)
         {
-            if (db == null)
+            if (db == null || authorizationService == null)
                 throw new ArgumentException();
 
             this.db = db;
+            this._authorizationService = authorizationService;
         }
 
         // POST: api/User
@@ -53,6 +57,7 @@ namespace CsWebChat.Server.Controllers
 
         // GET: api/User/X
         [HttpGet("{name}", Name = nameof(GetUserByName))]
+        [Authorize(Policy = "LoggedInPolicy")]
         public async Task<ActionResult<User>> GetUserByName(string name)
         {
             ActionResult result;
@@ -71,6 +76,20 @@ namespace CsWebChat.Server.Controllers
                 }
                 else
                 {
+                    var maySeeCompleteInfo = await this._authorizationService.AuthorizeAsync(
+                        HttpContext.User,
+                        user,
+                        new UserNameRequirement());
+
+                    // Only the user himself is allowed to see all iformation regarding his profile.
+                    // For other users some information must be removed when requesting this information.
+                    if (!maySeeCompleteInfo.Succeeded)
+                    {
+                        user.MessageReceived = null;
+                        user.MessageSent = null;
+                        user.Password = null;
+                    }
+
                     result = Ok(user);
                 }
             }
@@ -80,25 +99,44 @@ namespace CsWebChat.Server.Controllers
 
         // PUT: api/User/X
         [HttpPut("{name}")]
+        [Authorize(Policy = "LoggedInPolicy")]
         public async Task<ActionResult> Put(string name, [FromBody] User user)
         {
+            ActionResult result;
+
             if (String.IsNullOrEmpty(name) || !name.Equals(user.Name))
             {
-                return BadRequest();
+                result = BadRequest();
             }
             else
             {
                 var userDb = await this.db.User.FindAsync(name);
-                userDb.Name = user.Name;
-                userDb.Password = user.Password;
+                var mayChangeInfo = await this._authorizationService.AuthorizeAsync(
+                        HttpContext.User,
+                        user,
+                        new UserNameRequirement());
 
-                await this.db.SaveChangesAsync();
-                return Ok();
+                // Only the user himself is allowed to change his own information.
+                if (mayChangeInfo.Succeeded)
+                {
+                    userDb.Name = user.Name;
+                    userDb.Password = user.Password;
+
+                    await this.db.SaveChangesAsync();
+                    result = Ok();
+                }
+                else
+                {
+                    result = Forbid();
+                }
             }
+
+            return result;
         }
 
         // DELETE: api/User/X
         [HttpDelete("{name}")]
+        [Authorize(Policy = "LoggedInPolicy")]
         public async Task<ActionResult> Delete(string name)
         {
             ActionResult result = null;
@@ -112,9 +150,21 @@ namespace CsWebChat.Server.Controllers
                 try
                 {
                     var user = await this.db.User.FindAsync(name);
-                    this.db.User.Remove(user);
+                    var mayChangeInfo = await this._authorizationService.AuthorizeAsync(
+                        HttpContext.User,
+                        user,
+                        new UserNameRequirement());
 
-                    result = Ok();
+                    // Only the user himself is allowed to delete his account.
+                    if (mayChangeInfo.Succeeded)
+                    {
+                        this.db.User.Remove(user);
+                        result = Ok();
+                    }
+                    else
+                    {
+                        result = Forbid();
+                    }
                 }
                 catch
                 {
