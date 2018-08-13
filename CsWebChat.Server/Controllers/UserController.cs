@@ -15,7 +15,7 @@ namespace CsWebChat.Server.Controllers
     [AutoValidateAntiforgeryToken]
     public class UserController : ControllerBase
     {
-        private readonly ChatContext db;
+        private readonly ChatContext _db;
         private readonly IAuthorizationService _authorizationService;
 
         public UserController(ChatContext db, IAuthorizationService authorizationService)
@@ -23,7 +23,7 @@ namespace CsWebChat.Server.Controllers
             if (db == null || authorizationService == null)
                 throw new ArgumentException();
 
-            this.db = db;
+            this._db = db;
             this._authorizationService = authorizationService;
         }
 
@@ -33,7 +33,7 @@ namespace CsWebChat.Server.Controllers
         {
             ActionResult result = null;
 
-            if (await this.db.User.FindAsync(user.Name) != null)
+            if (await this._db.User.FindAsync(user.Name) != null)
             {
                 result = Conflict(new { user.Name });
             }
@@ -41,8 +41,8 @@ namespace CsWebChat.Server.Controllers
             {
                 try
                 {
-                    this.db.User.Add(user);
-                    await this.db.SaveChangesAsync();
+                    this._db.User.Add(user);
+                    await this._db.SaveChangesAsync();
 
                     result = CreatedAtRoute(nameof(GetUserByName), new { user.Name }, user);
                 }
@@ -68,7 +68,7 @@ namespace CsWebChat.Server.Controllers
             }
             else
             {
-                var user = await this.db.User.FindAsync(name);
+                var user = await this._db.User.FindAsync(name);
 
                 if (user == null)
                 {
@@ -110,7 +110,7 @@ namespace CsWebChat.Server.Controllers
             }
             else
             {
-                var userDb = await this.db.User.FindAsync(name);
+                var userDb = await this._db.User.FindAsync(name);
                 var mayChangeInfo = await this._authorizationService.AuthorizeAsync(
                         HttpContext.User,
                         user,
@@ -122,7 +122,7 @@ namespace CsWebChat.Server.Controllers
                     userDb.Name = user.Name;
                     userDb.Password = user.Password;
 
-                    await this.db.SaveChangesAsync();
+                    await this._db.SaveChangesAsync();
                     result = Ok();
                 }
                 else
@@ -149,7 +149,7 @@ namespace CsWebChat.Server.Controllers
             {
                 try
                 {
-                    var user = await this.db.User.FindAsync(name);
+                    var user = await this._db.User.FindAsync(name);
                     var mayChangeInfo = await this._authorizationService.AuthorizeAsync(
                         HttpContext.User,
                         user,
@@ -158,7 +158,7 @@ namespace CsWebChat.Server.Controllers
                     // Only the user himself is allowed to delete his account.
                     if (mayChangeInfo.Succeeded)
                     {
-                        this.db.User.Remove(user);
+                        this._db.User.Remove(user);
                         result = Ok();
                     }
                     else

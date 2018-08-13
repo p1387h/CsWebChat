@@ -15,5 +15,8 @@ namespace CsWebChat.Server.Models
         public User Receiver { get; set; }
         [Required]
         public DateTime TimeSent { get; set; }
+
+        public string SenderName { get; set; }
+        public string ReceiverName { get; set; }
     }
 }
