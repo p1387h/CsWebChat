@@ -51,5 +51,37 @@ namespace CsWebChat.Server.Controllers
 
             return result;
         }
+
+        // GET: api/Message
+        [HttpGet]
+        [Authorize(Policy = "LoggedInPolicy")]
+        public ActionResult<List<Message>> GetOwnMessages([FromQuery] string restriction)
+        {
+            var onlySent = restriction?.Equals("sent") ?? false;
+            var onlyReceived = restriction?.Equals("received") ?? false;
+            var name = HttpContext.User.Identity.Name;
+            List<Message> messages = null;
+
+            if(onlySent)
+            {
+                messages = this._db.Message
+                    .Where(x => x.SenderName.Equals(name))
+                    .ToList();
+            }
+            else if(onlyReceived)
+            {
+                messages = this._db.Message
+                    .Where(x => x.ReceiverName.Equals(name))
+                    .ToList();
+            }
+            else
+            {
+                messages = this._db.Message
+                    .Where(x => x.SenderName.Equals(name) || x.ReceiverName.Equals(name))
+                    .ToList();
+            }
+
+            return Ok(messages);
+        }
     }
 }
