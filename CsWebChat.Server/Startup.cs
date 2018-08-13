@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using CsWebChat.Server.AuthorizationAttributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CsWebChat.Server
 {
@@ -62,6 +63,9 @@ namespace CsWebChat.Server
                 options.HeaderName = "AntiforgeryHeader";
                 options.FormFieldName = "AntiforgeryFormField";
             });
+
+            services.AddSingleton<IAuthorizationHandler, MessageAvailabilityHandler>();
+            services.AddSingleton<IAuthorizationHandler, UserNameHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
