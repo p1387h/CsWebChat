@@ -59,7 +59,7 @@ namespace CsWebChat.Server.Controllers
                 .SingleOrDefault() != null;
 
             // An invalid combination must not authenticate the user.
-            if(!isInDb)
+            if (!isInDb)
             {
                 return BadRequest();
             }

@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using CsWebChat.Server.AuthorizationAttributes;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
+using CsWebChat.Server.Ws;
 
 namespace CsWebChat.Server
 {
@@ -64,6 +65,15 @@ namespace CsWebChat.Server
                 options.HeaderName = "AntiforgeryHeader";
                 options.FormFieldName = "AntiforgeryFormField";
             });
+            services.AddSignalR((options) =>
+            {
+                options.KeepAliveInterval = TimeSpan.FromSeconds(5);
+            });
+            services.AddLogging((builder) => 
+            {
+                builder.AddConsole();
+                builder.AddDebug();
+            });
 
             services.AddSingleton<IAuthorizationHandler, MessageAvailabilityHandler>();
             services.AddSingleton<IAuthorizationHandler, UserNameHandler>();
@@ -83,9 +93,16 @@ namespace CsWebChat.Server
 
             //app.UseHttpsRedirection();
             app.UseAuthentication();
+            app.UseSignalR((builder) => 
+            {
+                builder.MapHub<ChatHub>("/ws", (options) => 
+                {
+                    
+                });
+            });
             app.MapWhen(
                 (context) => { return !context.Request.Path.Value.StartsWith("/api/"); },
-                (config) => { config.Run(async (context) => { await context.Response.Body.WriteAsync(Encoding.ASCII.GetBytes("ERROR")); }); });
+                (builder) => { builder.Run(async (context) => { await context.Response.Body.WriteAsync(Encoding.ASCII.GetBytes("ERROR")); }); });
             app.UseMvc();
         }
     }
