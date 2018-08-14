@@ -1,4 +1,5 @@
-﻿using CsWebChat.Server.Ws.DTOs;
+﻿using AutoMapper;
+using CsWebChat.Server.Ws.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
@@ -15,11 +16,27 @@ namespace CsWebChat.Server.Ws
         // Key:     Username
         // Value:   ConnectionId
         private readonly Dictionary<string, string> _mappedConnectionIds = new Dictionary<string, string>();
-        private ILogger _logger;
+        private readonly IMapper _mapper;
+        private readonly DAL.ChatContext _db;
+        private readonly ILogger _logger;
 
-        public ChatHub(ILogger logger)
+        public ChatHub(DAL.ChatContext db, ILogger logger)
         {
+            if (db == null || logger == null)
+                throw new ArgumentException();
+
+            this._db = db;
             this._logger = logger;
+
+            // AutoMapper configuration:
+            var mapperConfig = new MapperConfiguration((config) => 
+            {
+                config.CreateMap<User, DAL.User>();
+                config.CreateMap<DAL.User, User>();
+                config.CreateMap<Message, DAL.Message>();
+                config.CreateMap<DAL.Message, Message>();
+            });
+            this._mapper = mapperConfig.CreateMapper();
         }
 
         public override Task OnConnectedAsync()
@@ -41,7 +58,7 @@ namespace CsWebChat.Server.Ws
             return base.OnDisconnectedAsync(exception);
         }
 
-        public Task SendMessageTo(string userName, Message message)
+        public async Task SendMessageTo(string userName, Message message)
         {
             try
             {
@@ -50,13 +67,19 @@ namespace CsWebChat.Server.Ws
                 var senderName = Context.User.Identity.Name;
                 var sender = new User() { Name = senderName };
 
-                client?.ReceiveMessage(sender, message);
+                if(client != null)
+                {
+                    var messageDb = this._mapper.Map<DAL.Message>(message);
+
+                    client.ReceiveMessage(sender, message);
+
+                    this._db.Message.Add(messageDb);
+                    await this._db.SaveChangesAsync();
+                }
             } catch(KeyNotFoundException e)
             {
                 this._logger.LogError(e, String.Format("User '{0}' not found.", userName));
             }
-
-            return Task.CompletedTask;
         }
     }
 }

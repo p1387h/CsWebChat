@@ -17,6 +17,8 @@ using CsWebChat.Server.AuthorizationAttributes;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
 using CsWebChat.Server.Ws;
+using CsWebChat.DAL;
+using AutoMapper;
 
 namespace CsWebChat.Server
 {
@@ -75,8 +77,19 @@ namespace CsWebChat.Server
                 builder.AddDebug();
             });
 
+            // AutoMapper configuration:
+            var mapperConfig = new MapperConfiguration((config) =>
+            {
+                config.CreateMap<Models.User, DAL.User>();
+                config.CreateMap<DAL.User, Models.User>();
+                config.CreateMap<Models.Message, DAL.Message>();
+                config.CreateMap<DAL.Message, Models.Message>();
+            });
+            var mapper = mapperConfig.CreateMapper();
+
             services.AddSingleton<IAuthorizationHandler, MessageAvailabilityHandler>();
             services.AddSingleton<IAuthorizationHandler, UserNameHandler>();
+            services.AddSingleton<IMapper>(mapper);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using CsWebChat.Server.AuthorizationAttributes;
 using CsWebChat.Server.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -15,16 +16,18 @@ namespace CsWebChat.Server.Controllers
     [AutoValidateAntiforgeryToken]
     public class UserController : ControllerBase
     {
-        private readonly ChatContext _db;
+        private readonly DAL.ChatContext _db;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IMapper _mapper;
 
-        public UserController(ChatContext db, IAuthorizationService authorizationService)
+        public UserController(DAL.ChatContext db, IAuthorizationService authorizationService, IMapper mapper)
         {
-            if (db == null || authorizationService == null)
+            if (db == null || authorizationService == null || mapper == null)
                 throw new ArgumentException();
 
             this._db = db;
             this._authorizationService = authorizationService;
+            this._mapper = mapper;
         }
 
         // POST: api/User
@@ -41,7 +44,9 @@ namespace CsWebChat.Server.Controllers
             {
                 try
                 {
-                    this._db.User.Add(user);
+                    var dbUser = this._mapper.Map<DAL.User>(user);
+
+                    this._db.User.Add(dbUser);
                     await this._db.SaveChangesAsync();
 
                     result = CreatedAtRoute(nameof(GetUserByName), new { user.Name }, user);
@@ -68,14 +73,15 @@ namespace CsWebChat.Server.Controllers
             }
             else
             {
-                var user = await this._db.User.FindAsync(name);
+                var userDb = await this._db.User.FindAsync(name);
 
-                if (user == null)
+                if (userDb == null)
                 {
                     result = NotFound();
                 }
                 else
                 {
+                    var user = this._mapper.Map<User>(userDb);
                     var maySeeCompleteInfo = await this._authorizationService.AuthorizeAsync(
                         HttpContext.User,
                         user,
@@ -149,7 +155,8 @@ namespace CsWebChat.Server.Controllers
             {
                 try
                 {
-                    var user = await this._db.User.FindAsync(name);
+                    var userDb = await this._db.User.FindAsync(name);
+                    var user = this._mapper.Map<User>(userDb);
                     var mayChangeInfo = await this._authorizationService.AuthorizeAsync(
                         HttpContext.User,
                         user,
@@ -158,7 +165,7 @@ namespace CsWebChat.Server.Controllers
                     // Only the user himself is allowed to delete his account.
                     if (mayChangeInfo.Succeeded)
                     {
-                        this._db.User.Remove(user);
+                        this._db.User.Remove(userDb);
                         result = Ok();
                     }
                     else

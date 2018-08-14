@@ -17,10 +17,10 @@ namespace CsWebChat.Server.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly ChatContext _db;
+        private readonly DAL.ChatContext _db;
         private readonly IAntiforgery _antiforgery;
 
-        public AuthenticationController(ChatContext db, IAntiforgery antiforgery)
+        public AuthenticationController(DAL.ChatContext db, IAntiforgery antiforgery)
         {
             if (db == null || antiforgery == null)
                 throw new ArgumentException();
