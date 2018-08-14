@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsWebChat.Server", "CsWebChat.Server\CsWebChat.Server.csproj", "{F45CC782-C528-4997-9AFB-68457FA6872E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsWebChat.Server.Ws", "CsWebChat.Server.Ws\CsWebChat.Server.Ws.csproj", "{3216921B-812D-4A04-88BF-3525DEE47D2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsWebChat.Server.Ws", "CsWebChat.Server.Ws\CsWebChat.Server.Ws.csproj", "{3216921B-812D-4A04-88BF-3525DEE47D2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
