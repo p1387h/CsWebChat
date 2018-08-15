@@ -93,8 +93,9 @@ namespace CsWebChat.Server.Controllers
                     {
                         user.MessageReceived = null;
                         user.MessageSent = null;
-                        user.Password = null;
                     }
+                    // Never return the password to the user.
+                    user.Password = null;
 
                     result = Ok(user);
                 }
