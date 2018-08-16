@@ -12,6 +12,13 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 {
     public class LoginViewModel : BindableBase
     {
+        // Header for TabControl display.
+        private readonly string _header = "Login";
+        public string Header
+        {
+            get { return _header; }
+        }
+
         private readonly IUnityContainer _container;
         private readonly IEventAggregator _eventAggregator;
         private readonly ILoggerFacade _logger;

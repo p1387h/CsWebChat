@@ -13,7 +13,7 @@
         prism:ViewModelLocator.AutoWireViewModel="True"
         
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls">
-    <UserControl prism:RegionManager.RegionName="{Binding Source={x:Static regions:RegionNames.MAIN_REGION}}">
+    <UserControl prism:RegionManager.RegionName="{Binding Source={x:Static regions:MainWindowRegionNames.MAIN_REGION}}">
 
     </UserControl>
 </Controls:MetroWindow>

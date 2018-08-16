@@ -40,12 +40,14 @@ namespace CsWebChat.WpfClient.LoginModule
             // a Uri is used for resolving the type when navigating.
             this._container.RegisterType<object, LoginView>(nameof(LoginView));
             this._container.RegisterType<object, RegisterView>(nameof(RegisterView));
+            this._container.RegisterType<object, TabView>(nameof(TabView));
         }
 
         private void InitializeRegions()
         {
-            this._regionManager.RegisterViewWithRegion(RegionNames.MAIN_REGION, typeof(LoginView));
-            this._regionManager.RegisterViewWithRegion(RegionNames.MAIN_REGION, typeof(RegisterView));
+            this._regionManager.RegisterViewWithRegion(MainWindowRegionNames.MAIN_REGION, typeof(TabView));
+            this._regionManager.RegisterViewWithRegion(LoginModuleRegionNames.TAB_REGION, typeof(LoginView));
+            this._regionManager.RegisterViewWithRegion(LoginModuleRegionNames.TAB_REGION, typeof(RegisterView));
         }
     }
 }

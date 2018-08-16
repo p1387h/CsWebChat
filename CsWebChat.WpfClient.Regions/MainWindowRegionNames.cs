@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CsWebChat.WpfClient.Regions
 {
-    public class RegionNames
+    public class MainWindowRegionNames
     {
         public static readonly string MAIN_REGION = "MainRegion";
     }
