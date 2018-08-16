@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsWebChat.WpfClient", "CsWe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsWebChat.WpfClient.Regions", "CsWebChat.WpfClient.Regions\CsWebChat.WpfClient.Regions.csproj", "{FE0DB377-481D-4D89-BE31-51053133F797}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsWebChat.WpfClient.LoginModule", "CsWebChat.WpfClient.LoginModule\CsWebChat.WpfClient.LoginModule.csproj", "{D44B31D3-A465-42D0-A142-4185E43CB053}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{FE0DB377-481D-4D89-BE31-51053133F797}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE0DB377-481D-4D89-BE31-51053133F797}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE0DB377-481D-4D89-BE31-51053133F797}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D44B31D3-A465-42D0-A142-4185E43CB053}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D44B31D3-A465-42D0-A142-4185E43CB053}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D44B31D3-A465-42D0-A142-4185E43CB053}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D44B31D3-A465-42D0-A142-4185E43CB053}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
