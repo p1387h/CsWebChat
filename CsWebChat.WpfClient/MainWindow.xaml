@@ -1,4 +1,4 @@
-﻿<Window x:Class="CsWebChat.WpfClient.MainWindow"
+﻿<Controls:MetroWindow x:Class="CsWebChat.WpfClient.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -10,8 +10,10 @@
         xmlns:regions="clr-namespace:CsWebChat.WpfClient.Regions;assembly=CsWebChat.WpfClient.Regions"
         
         xmlns:prism="http://prismlibrary.com/"
-        prism:ViewModelLocator.AutoWireViewModel="True">
-    <UserControl prism:RegionManager.RegionName="{Binding Source={x:Static regions:RegionNames.MAIN_REGION}}">
+        prism:ViewModelLocator.AutoWireViewModel="True"
         
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls">
+    <UserControl prism:RegionManager.RegionName="{Binding Source={x:Static regions:RegionNames.MAIN_REGION}}">
+
     </UserControl>
-</Window>
+</Controls:MetroWindow>
