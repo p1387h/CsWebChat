@@ -35,7 +35,11 @@ namespace CsWebChat.WpfClient.LoginModule
 
         private void InitializeServices()
         {
-            
+            // Views registered for the possibility of INavigationAware returning false and
+            // the RegionManager therefore requiring a new instance. The name is needed since
+            // a Uri is used for resolving the type when navigating.
+            this._container.RegisterType<object, LoginView>(nameof(LoginView));
+            this._container.RegisterType<object, RegisterView>(nameof(RegisterView));
         }
 
         private void InitializeRegions()
