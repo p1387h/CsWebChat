@@ -56,6 +56,7 @@ namespace CsWebChat.WpfClient.LoginModule
             this._container.RegisterType<object, LoginView>(nameof(LoginView));
             this._container.RegisterType<object, RegisterView>(nameof(RegisterView));
             this._container.RegisterType<object, TabView>(nameof(TabView));
+            this._container.RegisterType<object, ServerView>(nameof(ServerView));
         }
 
         private void InitializeRegions()
@@ -63,6 +64,7 @@ namespace CsWebChat.WpfClient.LoginModule
             this._regionManager.RegisterViewWithRegion(MainWindowRegionNames.MAIN_REGION, typeof(TabView));
             this._regionManager.RegisterViewWithRegion(LoginModuleRegionNames.TAB_REGION, typeof(LoginView));
             this._regionManager.RegisterViewWithRegion(LoginModuleRegionNames.TAB_REGION, typeof(RegisterView));
+            this._regionManager.RegisterViewWithRegion(LoginModuleRegionNames.TAB_REGION, typeof(ServerView));
         }
     }
 }

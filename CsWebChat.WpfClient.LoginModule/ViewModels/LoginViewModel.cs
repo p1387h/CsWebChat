@@ -75,7 +75,7 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             // any existing selected addresses.
             SelectedServerAddress = this._addressStorage.ServerAddress;
 
-            ButtonLogin = new DelegateCommand(async () => { await ButtonRegisterClicked(); });
+            ButtonLogin = new DelegateCommand(async () => { await this.ButtonRegisterClicked(); });
             PasswordChangedCommand = new DelegateCommand<PasswordBox>((box) => { Password = box.SecurePassword; });
         }
 
