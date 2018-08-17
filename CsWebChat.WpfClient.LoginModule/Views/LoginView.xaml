@@ -10,7 +10,9 @@
              xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
              
              xmlns:prism="http://prismlibrary.com/"
-             prism:ViewModelLocator.AutoWireViewModel="True">
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             
+             FontFamily="Verdana">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

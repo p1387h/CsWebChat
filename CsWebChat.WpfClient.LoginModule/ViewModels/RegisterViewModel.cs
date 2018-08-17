@@ -64,6 +64,7 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
         {
             var registered = await this._authenticationService.RegisterUser(new User());
 
+            
 
             throw new NotImplementedException();
         }

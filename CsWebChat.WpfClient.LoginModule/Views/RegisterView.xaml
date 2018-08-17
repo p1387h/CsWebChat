@@ -12,7 +12,9 @@
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
              
-             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactivity">
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactivity"
+             
+             FontFamily="Verdana">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -26,17 +28,31 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid Background="White">
-        <StackPanel>
-            <StackPanel Orientation="Horizontal">
+    <Grid Width="250"
+          Height="100"
+          Background="White">
+        <DockPanel>
+            <DockPanel.Resources>
+                <Style TargetType="Label">
+                    <Setter Property="Width" Value="75"></Setter>
+                </Style>
+                <Style TargetType="DockPanel">
+                    <Setter Property="Margin" Value="0,2"></Setter>
+                </Style>
+            </DockPanel.Resources>
+            <DockPanel DockPanel.Dock="Top">
                 <Label Content="Name"></Label>
-                <TextBox Width="100"
-                         Text="{Binding Name}">
+                <TextBox Text="{Binding Name}"
+                         Controls:TextBoxHelper.Watermark="Name"
+                         Controls:TextBoxHelper.ClearTextButton="True">
                 </TextBox>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Top">
                 <Label Content="Password"></Label>
-                <PasswordBox Width="100">
+                <PasswordBox Controls:PasswordBoxHelper.CapsLockWarningToolTip="CapsLock is on."
+                             Controls:PasswordBoxHelper.RevealButtonContent="Clear"
+                             Controls:TextBoxHelper.Watermark="Password"
+                             Controls:TextBoxHelper.ClearTextButton="True">
                     <ei:Interaction.Triggers>
                         <ei:EventTrigger EventName="PasswordChanged">
                             <ei:InvokeCommandAction 
@@ -46,8 +62,13 @@
                         </ei:EventTrigger>
                     </ei:Interaction.Triggers>
                 </PasswordBox>
-            </StackPanel>
-            <Button Content="Register" Command="{Binding ButtonRegister}"></Button>
-        </StackPanel>
+            </DockPanel>
+            <Button Content="Register" 
+                    Command="{Binding ButtonRegister}"
+                    Width="150"
+                    Height="30"
+                    Style="{DynamicResource SquareButtonStyle}">
+            </Button>
+        </DockPanel>
     </Grid>
 </UserControl>

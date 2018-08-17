@@ -12,7 +12,9 @@
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
         
-        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls">
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      
+        FontFamily="Verdana">
     <UserControl prism:RegionManager.RegionName="{Binding Source={x:Static regions:MainWindowRegionNames.MAIN_REGION}}">
 
     </UserControl>

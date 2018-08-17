@@ -12,7 +12,9 @@
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
              
-             xmlns:regions="clr-namespace:CsWebChat.WpfClient.Regions;assembly=CsWebChat.WpfClient.Regions">
+             xmlns:regions="clr-namespace:CsWebChat.WpfClient.Regions;assembly=CsWebChat.WpfClient.Regions"
+             
+             FontFamily="Verdana">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
