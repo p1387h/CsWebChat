@@ -12,6 +12,8 @@
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
              
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactivity"
+             
              FontFamily="Verdana">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -26,11 +28,55 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid Background="White">
-        <TextBlock VerticalAlignment="Center" 
-                   HorizontalAlignment="Center" 
-                   Text="Login" 
-                   FontSize="20">
-        </TextBlock>
+    <Grid Width="300"
+          Height="150"
+          Background="White">
+        <DockPanel>
+            <DockPanel.Resources>
+                <Style TargetType="Label">
+                    <Setter Property="Width" Value="75"></Setter>
+                </Style>
+                <Style TargetType="DockPanel">
+                    <Setter Property="Margin" Value="0,2"></Setter>
+                </Style>
+            </DockPanel.Resources>
+            <DockPanel DockPanel.Dock="Top">
+                <Label Content="Name"></Label>
+                <TextBox Text="{Binding Name}"
+                         Controls:TextBoxHelper.Watermark="Name"
+                         Controls:TextBoxHelper.ClearTextButton="True">
+                </TextBox>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Top">
+                <Label Content="Password"></Label>
+                <PasswordBox Controls:PasswordBoxHelper.CapsLockWarningToolTip="CapsLock is on."
+                             Controls:PasswordBoxHelper.RevealButtonContent="Clear"
+                             Controls:TextBoxHelper.Watermark="Password"
+                             Controls:TextBoxHelper.ClearTextButton="True">
+                    <ei:Interaction.Triggers>
+                        <ei:EventTrigger EventName="PasswordChanged">
+                            <ei:InvokeCommandAction 
+                                Command="{Binding PasswordChangedCommand}" 
+                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=PasswordBox, Mode=FindAncestor}}">
+                            </ei:InvokeCommandAction>
+                        </ei:EventTrigger>
+                    </ei:Interaction.Triggers>
+                </PasswordBox>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Top">
+                <Label Content="Server"></Label>
+                <Controls:SplitButton ItemsSource="{Binding ServerAddresses}"
+                                      SelectedIndex="0"
+                                      SelectedItem="{Binding SelectedServerAddress}"
+                                      HorizontalContentAlignment="Left">
+                </Controls:SplitButton>
+            </DockPanel>
+            <Button Content="Login" 
+                    Command="{Binding ButtonLogin}"
+                    Width="150"
+                    Height="30"
+                    Style="{DynamicResource SquareButtonStyle}">
+            </Button>
+        </DockPanel>
     </Grid>
 </UserControl>

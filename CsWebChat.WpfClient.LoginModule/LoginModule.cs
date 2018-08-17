@@ -39,9 +39,12 @@ namespace CsWebChat.WpfClient.LoginModule
 
         private void InitializeServices()
         {
+            var addressStorage = new AddressStorage();
+            addressStorage.Servers.Add("http://localhost:5000/");
+
             this._container.RegisterInstance<AuthenticationStorage>(new AuthenticationStorage());
             this._container.RegisterInstance<AntiforgeryStorage>(new AntiforgeryStorage());
-            this._container.RegisterInstance<AddressStorage>(new AddressStorage() { ServerAddress = "http://localhost:5000/api/authentication/csrftoken" });
+            this._container.RegisterInstance<AddressStorage>(addressStorage);
 
             this._container.RegisterType<WsChatRequest>();
             this._container.RegisterType<AntiforgeryService>();

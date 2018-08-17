@@ -28,8 +28,8 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid Width="250"
-          Height="100"
+    <Grid Width="300"
+          Height="150"
           Background="White">
         <DockPanel>
             <DockPanel.Resources>
@@ -62,6 +62,14 @@
                         </ei:EventTrigger>
                     </ei:Interaction.Triggers>
                 </PasswordBox>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Top">
+                <Label Content="Server"></Label>
+                <Controls:SplitButton ItemsSource="{Binding ServerAddresses}"
+                                      SelectedIndex="0"
+                                      SelectedItem="{Binding SelectedServerAddress}"
+                                      HorizontalContentAlignment="Left">
+                </Controls:SplitButton>
             </DockPanel>
             <Button Content="Register" 
                     Command="{Binding ButtonRegister}"

@@ -7,5 +7,11 @@ namespace CsWebChat.WpfClient.SharedWebLogic.Models
     public class AddressStorage
     {
         public string ServerAddress { get; set; }
+        public List<string> Servers { get; private set; }
+
+        public AddressStorage()
+        {
+            Servers = new List<string>();
+        }
     }
 }

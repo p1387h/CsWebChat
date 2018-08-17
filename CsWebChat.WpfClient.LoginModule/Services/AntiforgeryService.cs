@@ -34,7 +34,11 @@ namespace CsWebChat.WpfClient.LoginModule.Services
             {
                 using (var request = this._container.Resolve<WsChatRequest>())
                 {
-                    var address = this._addressStorage.ServerAddress;
+                    // The address of the server could may already end with a "/". In this case
+                    // another one is not needed.
+                    var combiner = (this._addressStorage.ServerAddress.EndsWith("/")) ? "" : "/";
+                    var address = String.Join(combiner, this._addressStorage.ServerAddress, "api/authentication/csrftoken");
+
                     var result = await request.Client.GetAsync(address);
                     var jsonResponse = await result.Content.ReadAsStringAsync();
                     var csrfReponse = JsonConvert.DeserializeObject<CsrfResponse>(jsonResponse);
