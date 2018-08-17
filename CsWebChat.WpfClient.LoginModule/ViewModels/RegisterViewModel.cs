@@ -35,14 +35,7 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
         }
 
         public SecureString Password { get; set; }
-
-        private string _address = "http://localhost:5000/api/authentication/csrftoken";
-        public string Address
-        {
-            get { return _address; }
-            set { SetProperty<string>(ref _address, value); }
-        }
-
+        
         public ICommand ButtonRegister { get; set; }
         public ICommand PasswordChangedCommand { get; set; }
 
@@ -51,10 +44,10 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
         private readonly ILoggerFacade _logger;
         private readonly AuthenticationService _authenticationService;
 
-        public RegisterViewModel(IUnityContainer container, IEventAggregator eventAggregator, 
+        public RegisterViewModel(IUnityContainer container, IEventAggregator eventAggregator,
             ILoggerFacade logger, AuthenticationService authenticationService)
         {
-            if (container == null || eventAggregator == null 
+            if (container == null || eventAggregator == null
                 || logger == null || authenticationService == null)
                 throw new ArgumentException();
 
@@ -63,15 +56,16 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             this._logger = logger;
             this._authenticationService = authenticationService;
 
-            ButtonRegister = new DelegateCommand(async () => {
-                await ButtonRegisterClicked();
-            });
+            ButtonRegister = new DelegateCommand(async () => { await ButtonRegisterClicked(); });
             PasswordChangedCommand = new DelegateCommand<PasswordBox>((box) => { Password = box.SecurePassword; });
         }
 
         private async Task ButtonRegisterClicked()
         {
-            await this._authenticationService.LoginUser(new User(), Address);
+            var registered = await this._authenticationService.RegisterUser(new User());
+
+
+            throw new NotImplementedException();
         }
     }
 }

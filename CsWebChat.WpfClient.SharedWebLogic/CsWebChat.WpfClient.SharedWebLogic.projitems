@@ -9,6 +9,7 @@
     <Import_RootNamespace>CsWebChat.WpfClient.SharedWebLogic</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Models\AddressStorage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\AntiforgeryStorage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\AuthenticationStorage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\WsChatRequest.cs" />
