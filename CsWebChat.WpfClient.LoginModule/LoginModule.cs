@@ -1,5 +1,8 @@
-﻿using CsWebChat.WpfClient.LoginModule.Views;
+﻿using CsWebChat.WpfClient.LoginModule.Services;
+using CsWebChat.WpfClient.LoginModule.Views;
 using CsWebChat.WpfClient.Regions;
+using CsWebChat.WpfClient.SharedWebLogic.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Practices.Unity;
 using Prism.Logging;
 using Prism.Modularity;
@@ -7,6 +10,8 @@ using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,7 +31,6 @@ namespace CsWebChat.WpfClient.LoginModule
             this._regionManager = regionManager;
         }
 
-
         public void Initialize()
         {
             this.InitializeServices();
@@ -35,6 +39,11 @@ namespace CsWebChat.WpfClient.LoginModule
 
         private void InitializeServices()
         {
+            this._container.RegisterInstance<AntiforgeryStorage>(new AntiforgeryStorage());
+            this._container.RegisterType<WsChatRequest>();
+            this._container.RegisterType<AntiforgeryService>();
+            this._container.RegisterType<AuthenticationService>();
+
             // Views registered for the possibility of INavigationAware returning false and
             // the RegionManager therefore requiring a new instance. The name is needed since
             // a Uri is used for resolving the type when navigating.

@@ -10,7 +10,9 @@
              xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
              
              xmlns:prism="http://prismlibrary.com/"
-             prism:ViewModelLocator.AutoWireViewModel="True">
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactivity">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -25,10 +27,27 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid Background="White">
-        <TextBlock VerticalAlignment="Center" 
-                   HorizontalAlignment="Center" 
-                   Text="Register" 
-                   FontSize="20">
-        </TextBlock>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Name"></Label>
+                <TextBox Width="100"
+                         Text="{Binding Name}">
+                </TextBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Password"></Label>
+                <PasswordBox Width="100">
+                    <ei:Interaction.Triggers>
+                        <ei:EventTrigger EventName="PasswordChanged">
+                            <ei:InvokeCommandAction 
+                                Command="{Binding PasswordChangedCommand}" 
+                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=PasswordBox, Mode=FindAncestor}}">
+                            </ei:InvokeCommandAction>
+                        </ei:EventTrigger>
+                    </ei:Interaction.Triggers>
+                </PasswordBox>
+            </StackPanel>
+            <Button Content="Register" Command="{Binding ButtonRegister}"></Button>
+        </StackPanel>
     </Grid>
 </UserControl>

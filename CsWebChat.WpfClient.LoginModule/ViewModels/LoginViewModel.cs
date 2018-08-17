@@ -28,9 +28,9 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             if (container == null || eventAggregator == null || logger == null)
                 throw new ArgumentException();
 
-            _container = container;
-            _eventAggregator = eventAggregator;
-            _logger = logger;
+            this._container = container;
+            this._eventAggregator = eventAggregator;
+            this._logger = logger;
         }
     }
 }
