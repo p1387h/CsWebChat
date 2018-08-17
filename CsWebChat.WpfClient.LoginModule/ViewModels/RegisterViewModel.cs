@@ -35,7 +35,19 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
         }
 
         public SecureString Password { get; set; }
-        
+        public List<string> ServerAddresses { get { return this._addressStorage.Servers; } }
+
+        private string _selectedServerAddress;
+        public string SelectedServerAddress
+        {
+            get { return _selectedServerAddress; }
+            set
+            {
+                SetProperty<string>(ref _selectedServerAddress, value);
+                this._addressStorage.ServerAddress = value;
+            }
+        }
+
         public ICommand ButtonRegister { get; set; }
         public ICommand PasswordChangedCommand { get; set; }
 
@@ -43,18 +55,26 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
         private readonly IEventAggregator _eventAggregator;
         private readonly ILoggerFacade _logger;
         private readonly AuthenticationService _authenticationService;
+        private readonly AddressStorage _addressStorage;
 
         public RegisterViewModel(IUnityContainer container, IEventAggregator eventAggregator,
-            ILoggerFacade logger, AuthenticationService authenticationService)
+            ILoggerFacade logger, AuthenticationService authenticationService,
+            AddressStorage addressStorage)
         {
             if (container == null || eventAggregator == null
-                || logger == null || authenticationService == null)
+                || logger == null || authenticationService == null
+                || addressStorage == null)
                 throw new ArgumentException();
 
             this._container = container;
             this._eventAggregator = eventAggregator;
             this._logger = logger;
             this._authenticationService = authenticationService;
+            this._addressStorage = addressStorage;
+
+            // Trigger the getter once in order to force the view to load 
+            // any existing selected addresses.
+            SelectedServerAddress = this._addressStorage.ServerAddress;
 
             ButtonRegister = new DelegateCommand(async () => { await ButtonRegisterClicked(); });
             PasswordChangedCommand = new DelegateCommand<PasswordBox>((box) => { Password = box.SecurePassword; });

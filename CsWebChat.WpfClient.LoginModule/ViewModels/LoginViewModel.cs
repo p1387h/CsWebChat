@@ -71,6 +71,10 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             this._authenticationService = authenticationService;
             this._addressStorage = addressStorage;
 
+            // Trigger the getter once in order to force the view to load 
+            // any existing selected addresses.
+            SelectedServerAddress = this._addressStorage.ServerAddress;
+
             ButtonLogin = new DelegateCommand(async () => { await ButtonRegisterClicked(); });
             PasswordChangedCommand = new DelegateCommand<PasswordBox>((box) => { Password = box.SecurePassword; });
         }
