@@ -14,6 +14,8 @@
              
              xmlns:ei="http://schemas.microsoft.com/expression/2010/interactivity"
              
+             xmlns:validators="clr-namespace:CsWebChat.WpfClient.LoginModule.Validators"
+             
              FontFamily="Verdana">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -26,10 +28,48 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- Custom style for TextBoxes using a ErrorTemplate -->
+            <Style x:Key="TextBoxErrorStyle" 
+                   BasedOn="{StaticResource MetroTextBox}" 
+                   TargetType="TextBox">
+                <Setter Property="Validation.ErrorTemplate">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <StackPanel>
+                                <DockPanel>
+                                    <AdornedElementPlaceholder x:Name="Placeholder"></AdornedElementPlaceholder>
+                                    <!-- Hacky way of keeping the width of the Border element the same as the adornment one -->
+                                    <TextBlock></TextBlock>
+                                </DockPanel>
+                                <TextBlock FontSize="10" 
+                                           Foreground="Red"
+                                           Margin="0,2,0,0"
+                                           Text="{Binding ElementName=Placeholder, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}"
+                                           TextWrapping="Wrap">
+                                </TextBlock>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError" Value="True">
+                        <Setter Property="Margin" Value="0,2,0,16">
+                        </Setter>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <!-- Custom DataTemplate for simple error messages -->
+            <DataTemplate x:Key="ErrorMessageTemplate">
+                <TextBlock Text="{Binding}"
+                           FontSize="10"
+                           Foreground="Red">
+                </TextBlock>
+            </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid Width="300"
-          Height="150"
+          Height="200"
           Background="White">
         <DockPanel>
             <DockPanel.Resources>
@@ -42,26 +82,52 @@
             </DockPanel.Resources>
             <DockPanel DockPanel.Dock="Top">
                 <Label Content="Name"></Label>
-                <TextBox Text="{Binding Name}"
-                         Controls:TextBoxHelper.Watermark="Name"
-                         Controls:TextBoxHelper.ClearTextButton="True">
+                <TextBox Controls:TextBoxHelper.Watermark="Name"
+                         Controls:TextBoxHelper.ClearTextButton="True"
+                         Style="{StaticResource TextBoxErrorStyle}"
+                         x:Name="TextBoxName">
+                    <TextBox.Text>
+                        <Binding Path="Name" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validators:UserNameValidationRule></validators:UserNameValidationRule>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
                 </TextBox>
             </DockPanel>
             <DockPanel DockPanel.Dock="Top">
                 <Label Content="Password"></Label>
-                <PasswordBox Controls:PasswordBoxHelper.CapsLockWarningToolTip="CapsLock is on."
-                             Controls:PasswordBoxHelper.RevealButtonContent="Clear"
-                             Controls:TextBoxHelper.Watermark="Password"
-                             Controls:TextBoxHelper.ClearTextButton="True">
-                    <ei:Interaction.Triggers>
-                        <ei:EventTrigger EventName="PasswordChanged">
-                            <ei:InvokeCommandAction 
-                                Command="{Binding PasswordChangedCommand}" 
-                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=PasswordBox, Mode=FindAncestor}}">
-                            </ei:InvokeCommandAction>
-                        </ei:EventTrigger>
-                    </ei:Interaction.Triggers>
-                </PasswordBox>
+                <StackPanel>
+                    <PasswordBox Controls:PasswordBoxHelper.CapsLockWarningToolTip="CapsLock is on."
+                                 Controls:PasswordBoxHelper.RevealButtonContent="Clear"
+                                 Controls:TextBoxHelper.Watermark="Password"
+                                 Controls:TextBoxHelper.ClearTextButton="True">
+                        <ei:Interaction.Triggers>
+                            <ei:EventTrigger EventName="PasswordChanged">
+                                <ei:InvokeCommandAction Command="{Binding PasswordChangedCommand}" 
+                                                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=PasswordBox, Mode=FindAncestor}}">
+                                </ei:InvokeCommandAction>
+                            </ei:EventTrigger>
+                        </ei:Interaction.Triggers>
+                    </PasswordBox>
+                    <!-- Custom error message regarding the length of the password -->
+                    <TextBlock Text="{Binding PasswordLengthError}"
+                               FontSize="10"
+                               Foreground="Red"
+                               TextWrapping="Wrap"
+                               Margin="0,2,0,0">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding PasswordLengthOk}" Value="False">
+                                        <Setter Property="Visibility" Value="Visible"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
             </DockPanel>
             <DockPanel DockPanel.Dock="Top">
                 <Label Content="Server"></Label>
@@ -71,12 +137,33 @@
                                       HorizontalContentAlignment="Left">
                 </Controls:SplitButton>
             </DockPanel>
-            <Button Content="Register" 
+            <Button DockPanel.Dock="Top"
+                    Content="Register" 
                     Command="{Binding ButtonRegister}"
                     Width="150"
                     Height="30"
-                    Style="{DynamicResource SquareButtonStyle}">
+                    VerticalAlignment="Top"
+                    Margin="0,8"
+                    x:Name="Test">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource SquareButtonStyle}">
+                        <Setter Property="IsEnabled" Value="False"></Setter>
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding PasswordLengthOk}" Value="True"></Condition>
+                                    <Condition Binding="{Binding ElementName=TextBoxName, Path=(Validation.HasError)}" Value="False"></Condition>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="IsEnabled" Value="True"></Setter>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
             </Button>
+            <ListBox DockPanel.Dock="Bottom"
+                     ItemsSource="{Binding ErrorMessages}"
+                     ItemTemplate="{StaticResource ErrorMessageTemplate}">
+            </ListBox>
         </DockPanel>
     </Grid>
 </UserControl>

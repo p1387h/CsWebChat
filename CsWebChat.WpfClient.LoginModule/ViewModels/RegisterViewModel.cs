@@ -9,7 +9,10 @@ using Prism.Logging;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +37,24 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             set { SetProperty<string>(ref _name, value); }
         }
 
+        private readonly int _minPasswordLength = 6;
+        private readonly int _maxPasswordLength = 20;
+        public string PasswordLengthError
+        {
+            get {
+                return String.Format("Password must contain {0} to {1} characters.", 
+                    this._minPasswordLength, 
+                    this._maxPasswordLength);
+            }
+        }
+
+        private bool _passwordLengthOk;
+        public bool PasswordLengthOk
+        {
+            get { return _passwordLengthOk; }
+            set { SetProperty<bool>(ref _passwordLengthOk, value); }
+        }
+
         public SecureString Password { get; set; }
         public List<string> ServerAddresses { get { return this._addressStorage.Servers; } }
 
@@ -46,6 +67,13 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
                 SetProperty<string>(ref _selectedServerAddress, value);
                 this._addressStorage.ServerAddress = value;
             }
+        }
+
+        private ObservableCollection<string> _errorMessages = new ObservableCollection<string>();
+        public ObservableCollection<string> ErrorMessages
+        {
+            get { return _errorMessages; }
+            set { SetProperty<ObservableCollection<string>>(ref _errorMessages, value); }
         }
 
         public ICommand ButtonRegister { get; set; }
@@ -77,16 +105,31 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             SelectedServerAddress = this._addressStorage.ServerAddress;
 
             ButtonRegister = new DelegateCommand(async () => { await this.ButtonRegisterClicked(); });
-            PasswordChangedCommand = new DelegateCommand<PasswordBox>((box) => { Password = box.SecurePassword; });
+            PasswordChangedCommand = new DelegateCommand<PasswordBox>(async (box) => { await this.PasswordChangedFired(box); });
         }
 
         private async Task ButtonRegisterClicked()
         {
-            var registered = await this._authenticationService.RegisterUser(new User());
+            try
+            {
+                var registered = await this._authenticationService.RegisterUser(new User());
 
-            
 
-            throw new NotImplementedException();
+
+                throw new NotImplementedException();
+            } catch(HttpRequestException e)
+            {
+                ErrorMessages.Clear();
+                ErrorMessages.Add("Server could not be reached.");
+            }
+        }
+
+        private async Task PasswordChangedFired(PasswordBox box)
+        {
+            var passwordLength = box.SecurePassword.Length;
+
+            Password = box.SecurePassword;
+            PasswordLengthOk = passwordLength >= this._minPasswordLength && passwordLength <= this._maxPasswordLength;
         }
     }
 }

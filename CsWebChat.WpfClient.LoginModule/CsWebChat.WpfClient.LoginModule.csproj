@@ -93,6 +93,7 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Services\AntiforgeryService.cs" />
     <Compile Include="Services\AuthenticationService.cs" />
+    <Compile Include="Validators\UserNameValidationRule.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\ServerViewModel.cs" />
