@@ -39,8 +39,8 @@ namespace CsWebChat.WpfClient.LoginModule.Services
                     var combiner = (this._addressStorage.ServerAddress.EndsWith("/")) ? "" : "/";
                     var address = String.Join(combiner, this._addressStorage.ServerAddress, "api/authentication/csrftoken");
 
-                    var result = await request.Client.GetAsync(address);
-                    var jsonResponse = await result.Content.ReadAsStringAsync();
+                    var response = await request.Client.GetAsync(address);
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
                     var csrfReponse = JsonConvert.DeserializeObject<CsrfResponse>(jsonResponse);
                     var cookie = request.Container.GetCookies(new Uri(address))["AntiforgeryCookie"];
 

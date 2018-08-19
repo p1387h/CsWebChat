@@ -75,6 +75,13 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             get { return _errorMessages; }
             set { SetProperty<ObservableCollection<string>>(ref _errorMessages, value); }
         }
+        
+        private ObservableCollection<string> _successMesssages = new ObservableCollection<string>();
+        public ObservableCollection<string> SuccessMessages
+        {
+            get { return _successMesssages; }
+            set { SetProperty<ObservableCollection<string>>(ref _successMesssages, value); }
+        }
 
         public ICommand ButtonRegister { get; set; }
         public ICommand PasswordChangedCommand { get; set; }
@@ -84,14 +91,15 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
         private readonly ILoggerFacade _logger;
         private readonly AuthenticationService _authenticationService;
         private readonly AddressStorage _addressStorage;
+        private readonly PasswordHashService _passwordHashService;
 
         public RegisterViewModel(IUnityContainer container, IEventAggregator eventAggregator,
             ILoggerFacade logger, AuthenticationService authenticationService,
-            AddressStorage addressStorage)
+            AddressStorage addressStorage, PasswordHashService passwordHashService)
         {
             if (container == null || eventAggregator == null
                 || logger == null || authenticationService == null
-                || addressStorage == null)
+                || addressStorage == null || passwordHashService == null)
                 throw new ArgumentException();
 
             this._container = container;
@@ -99,6 +107,7 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             this._logger = logger;
             this._authenticationService = authenticationService;
             this._addressStorage = addressStorage;
+            this._passwordHashService = passwordHashService;
 
             // Trigger the getter once in order to force the view to load 
             // any existing selected addresses.
@@ -110,16 +119,40 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
         private async Task ButtonRegisterClicked()
         {
+            ErrorMessages.Clear();
+            SuccessMessages.Clear();
+
             try
             {
-                var registered = await this._authenticationService.RegisterUser(new User());
+                var user = new User()
+                {
+                    Name = Name,
+                    Password = this._passwordHashService.HashSecureString(Password)
+                };
+                var registerResult = await this._authenticationService.RegisterUser(user);
 
+                if(registerResult.Success)
+                {
+                    SuccessMessages.Add("Registration successful.");
+                }
+                else
+                {
+                    ErrorMessages.Add(String.Format("Registration unsuccessful. Reason: {0}", registerResult.StatusCode));
 
+                    // Show the response of the server to the user.
+                    if(registerResult.Response != null)
+                    {
+                        var outputMap = "Field: {0}, Value: {1}";
 
-                throw new NotImplementedException();
-            } catch(HttpRequestException e)
+                        if (!String.IsNullOrEmpty(registerResult.Response.Name))
+                            ErrorMessages.Add(String.Format(outputMap, nameof(Name), registerResult.Response.Name));
+                        if (!String.IsNullOrEmpty(registerResult.Response.Password))
+                            ErrorMessages.Add(String.Format(outputMap, nameof(Password), registerResult.Response.Password));
+                    }
+                        
+                }
+            } catch(HttpRequestException)
             {
-                ErrorMessages.Clear();
                 ErrorMessages.Add("Server could not be reached.");
             }
         }

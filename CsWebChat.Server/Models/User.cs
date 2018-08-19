@@ -13,10 +13,9 @@ namespace CsWebChat.Server.Models
         [MaxLength(20)]
         [RegularExpression("^[a-zA-Z0-9]{4,20}$")]
         public string Name { get; set; }
+        // No RegEx since the password should get hashed! Any limitations 
+        // (i.e. characters) must be set in the client application.
         [Required]
-        [MinLength(6)]
-        [MaxLength(20)]
-        [RegularExpression("^[a-zA-Z0-9]{6,20}$")]
         public string Password { get; set; }
 
         public IList<Message> MessageSent { get; set; }

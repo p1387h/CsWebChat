@@ -90,9 +90,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\CsrfResponse.cs" />
+    <Compile Include="Models\RegisterResponse.cs" />
+    <Compile Include="Models\RegisterResult.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Services\AntiforgeryService.cs" />
     <Compile Include="Services\AuthenticationService.cs" />
+    <Compile Include="Services\PasswordHashService.cs" />
     <Compile Include="Validators\UserNameValidationRule.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />

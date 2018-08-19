@@ -1,9 +1,12 @@
 ﻿using CsWebChat.WpfClient.LoginModule.Models;
 using CsWebChat.WpfClient.SharedWebLogic.Models;
 using Microsoft.Practices.Unity;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +25,7 @@ namespace CsWebChat.WpfClient.LoginModule.Services
         public AuthenticationService(AntiforgeryStorage storage, AntiforgeryService antiforgeryService,
             AddressStorage addressStorage, IUnityContainer container)
         {
-            if (storage == null || antiforgeryService == null 
+            if (storage == null || antiforgeryService == null
                 || addressStorage == null || container == null)
                 throw new ArgumentException();
 
@@ -32,12 +35,37 @@ namespace CsWebChat.WpfClient.LoginModule.Services
             this._addressStorage = addressStorage;
         }
 
-        public async Task<bool> RegisterUser(User user)
+        public async Task<RegisterResult> RegisterUser(User user)
         {
             await this._antiforgeryService.TryRequestingAntiforgeryCookieTokenPair();
 
+            using (var request = this._container.Resolve<WsChatRequest>())
+            {
+                // The address of the server could may already end with a "/". In this case
+                // another one is not needed.
+                var combiner = (this._addressStorage.ServerAddress.EndsWith("/")) ? "" : "/";
+                var address = String.Join(combiner, this._addressStorage.ServerAddress, "api/user");
+                var json = JsonConvert.SerializeObject(user);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            throw new NotImplementedException();
+                var response = await request.Client.PostAsync(address, content);
+
+                if (response.StatusCode == HttpStatusCode.Created)
+                {
+                    return new RegisterResult() { Success = true };
+                }
+                else
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+
+                    return new RegisterResult()
+                    {
+                        Success = false,
+                        StatusCode = response.StatusCode,
+                        Response = JsonConvert.DeserializeObject<RegisterResponse>(jsonResponse)
+                    };
+                }
+            }
         }
 
         public async Task<bool> LoginUser(User user)

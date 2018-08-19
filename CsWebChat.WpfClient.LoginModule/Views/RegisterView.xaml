@@ -66,6 +66,13 @@
                            Foreground="Red">
                 </TextBlock>
             </DataTemplate>
+            <!-- Custom DataTemplate for simple success messages -->
+            <DataTemplate x:Key="SuccessMessageTemplate">
+                <TextBlock Text="{Binding}"
+                           FontSize="10"
+                           Foreground="Green">
+                </TextBlock>
+            </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid Width="300"
@@ -160,7 +167,11 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <ListBox DockPanel.Dock="Bottom"
+            <ListBox DockPanel.Dock="Top"
+                     ItemsSource="{Binding SuccessMessages}"
+                     ItemTemplate="{StaticResource SuccessMessageTemplate}">
+            </ListBox>
+            <ListBox DockPanel.Dock="Top"
                      ItemsSource="{Binding ErrorMessages}"
                      ItemTemplate="{StaticResource ErrorMessageTemplate}">
             </ListBox>
