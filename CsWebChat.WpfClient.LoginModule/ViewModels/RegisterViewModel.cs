@@ -124,32 +124,35 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
             try
             {
-                var user = new User()
+                if(!String.IsNullOrEmpty(SelectedServerAddress))
                 {
-                    Name = Name,
-                    Password = this._passwordHashService.HashSecureString(Password)
-                };
-                var registerResult = await this._authenticationService.RegisterUser(user);
-
-                if(registerResult.Success)
-                {
-                    SuccessMessages.Add("Registration successful.");
-                }
-                else
-                {
-                    ErrorMessages.Add(String.Format("Registration unsuccessful. Reason: {0}", registerResult.StatusCode));
-
-                    // Show the response of the server to the user.
-                    if(registerResult.Response != null)
+                    var user = new User()
                     {
-                        var outputMap = "Field: {0}, Value: {1}";
+                        Name = Name,
+                        Password = this._passwordHashService.HashSecureString(Password)
+                    };
+                    var registerResult = await this._authenticationService.RegisterUser(user);
 
-                        if (!String.IsNullOrEmpty(registerResult.Response.Name))
-                            ErrorMessages.Add(String.Format(outputMap, nameof(Name), registerResult.Response.Name));
-                        if (!String.IsNullOrEmpty(registerResult.Response.Password))
-                            ErrorMessages.Add(String.Format(outputMap, nameof(Password), registerResult.Response.Password));
+                    if (registerResult.Success)
+                    {
+                        SuccessMessages.Add("Registration successful.");
                     }
-                        
+                    else
+                    {
+                        ErrorMessages.Add(String.Format("Registration unsuccessful. Reason: {0}", registerResult.StatusCode));
+
+                        // Show the response of the server to the user.
+                        if (registerResult.Response != null)
+                        {
+                            var outputMap = "Field: {0}, Value: {1}";
+
+                            if (!String.IsNullOrEmpty(registerResult.Response.Name))
+                                ErrorMessages.Add(String.Format(outputMap, nameof(Name), registerResult.Response.Name));
+                            if (!String.IsNullOrEmpty(registerResult.Response.Password))
+                                ErrorMessages.Add(String.Format(outputMap, nameof(Password), registerResult.Response.Password));
+                        }
+
+                    }
                 }
             } catch(HttpRequestException)
             {

@@ -116,32 +116,35 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
             try
             {
-                var user = new User()
+                if(!String.IsNullOrEmpty(SelectedServerAddress))
                 {
-                    Name = Name,
-                    Password = this._passwordHashService.HashSecureString(Password)
-                };
-                var loginResult = await this._authenticationService.LoginUser(user);
-
-                if (loginResult.Success)
-                {
-                    throw new NotImplementedException();
-                }
-                else
-                {
-                    ErrorMessages.Add(String.Format("Login unsuccessful. Reason: {0}", loginResult.StatusCode));
-
-                    // Show the response of the server to the user.
-                    if (loginResult.Response != null)
+                    var user = new User()
                     {
-                        var outputMap = "Field: {0}, Value: {1}";
+                        Name = Name,
+                        Password = this._passwordHashService.HashSecureString(Password)
+                    };
+                    var loginResult = await this._authenticationService.LoginUser(user);
 
-                        if (!String.IsNullOrEmpty(loginResult.Response.Name))
-                            ErrorMessages.Add(String.Format(outputMap, nameof(Name), loginResult.Response.Name));
-                        if (!String.IsNullOrEmpty(loginResult.Response.Password))
-                            ErrorMessages.Add(String.Format(outputMap, nameof(Password), loginResult.Response.Password));
+                    if (loginResult.Success)
+                    {
+                        throw new NotImplementedException();
                     }
+                    else
+                    {
+                        ErrorMessages.Add(String.Format("Login unsuccessful. Reason: {0}", loginResult.StatusCode));
 
+                        // Show the response of the server to the user.
+                        if (loginResult.Response != null)
+                        {
+                            var outputMap = "Field: {0}, Value: {1}";
+
+                            if (!String.IsNullOrEmpty(loginResult.Response.Name))
+                                ErrorMessages.Add(String.Format(outputMap, nameof(Name), loginResult.Response.Name));
+                            if (!String.IsNullOrEmpty(loginResult.Response.Password))
+                                ErrorMessages.Add(String.Format(outputMap, nameof(Password), loginResult.Response.Password));
+                        }
+
+                    }
                 }
             }
             catch (HttpRequestException)
