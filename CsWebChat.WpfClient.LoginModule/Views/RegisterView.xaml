@@ -150,8 +150,7 @@
                     Width="150"
                     Height="30"
                     VerticalAlignment="Top"
-                    Margin="0,8"
-                    x:Name="Test">
+                    Margin="0,8">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource SquareButtonStyle}">
                         <Setter Property="IsEnabled" Value="False"></Setter>

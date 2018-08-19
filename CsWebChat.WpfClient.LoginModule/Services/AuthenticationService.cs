@@ -68,12 +68,37 @@ namespace CsWebChat.WpfClient.LoginModule.Services
             }
         }
 
-        public async Task<bool> LoginUser(User user)
+        public async Task<LoginResult> LoginUser(User user)
         {
             await this._antiforgeryService.TryRequestingAntiforgeryCookieTokenPair();
 
+            using (var request = this._container.Resolve<WsChatRequest>())
+            {
+                // The address of the server could may already end with a "/". In this case
+                // another one is not needed.
+                var combiner = (this._addressStorage.ServerAddress.EndsWith("/")) ? "" : "/";
+                var address = String.Join(combiner, this._addressStorage.ServerAddress, "api/authentication/login");
+                var json = JsonConvert.SerializeObject(user);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            throw new NotImplementedException();
+                var response = await request.Client.PostAsync(address, content);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return new LoginResult() { Success = true };
+                }
+                else
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+
+                    return new LoginResult()
+                    {
+                        Success = false,
+                        StatusCode = response.StatusCode,
+                        Response = JsonConvert.DeserializeObject<LoginResponse>(jsonResponse)
+                    };
+                }
+            }
         }
     }
 }

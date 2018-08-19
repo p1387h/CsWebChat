@@ -90,6 +90,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\CsrfResponse.cs" />
+    <Compile Include="Models\LoginResponse.cs" />
+    <Compile Include="Models\LoginResult.cs" />
     <Compile Include="Models\RegisterResponse.cs" />
     <Compile Include="Models\RegisterResult.cs" />
     <Compile Include="Models\User.cs" />

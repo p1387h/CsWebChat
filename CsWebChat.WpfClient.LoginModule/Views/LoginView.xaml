@@ -26,10 +26,18 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- Custom DataTemplate for simple error messages -->
+            <DataTemplate x:Key="ErrorMessageTemplate">
+                <TextBlock Text="{Binding}"
+                           FontSize="10"
+                           Foreground="Red">
+                </TextBlock>
+            </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid Width="300"
-          Height="150"
+          Height="200"
           Background="White">
         <DockPanel>
             <DockPanel.Resources>
@@ -42,7 +50,7 @@
             </DockPanel.Resources>
             <DockPanel DockPanel.Dock="Top">
                 <Label Content="Name"></Label>
-                <TextBox Text="{Binding Name}"
+                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                          Controls:TextBoxHelper.Watermark="Name"
                          Controls:TextBoxHelper.ClearTextButton="True">
                 </TextBox>
@@ -71,12 +79,28 @@
                                       HorizontalContentAlignment="Left">
                 </Controls:SplitButton>
             </DockPanel>
-            <Button Content="Login" 
+            <Button DockPanel.Dock="Top"
+                    Content="Login" 
                     Command="{Binding ButtonLogin}"
                     Width="150"
                     Height="30"
-                    Style="{DynamicResource SquareButtonStyle}">
+                    VerticalAlignment="Top"
+                    Margin="0,8">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource SquareButtonStyle}">
+                        <Setter Property="IsEnabled" Value="False"></Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding EnableLoginButton}" Value="True">
+                                <Setter Property="IsEnabled" Value="True"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
             </Button>
+            <ListBox DockPanel.Dock="Top"
+                     ItemsSource="{Binding ErrorMessages}"
+                     ItemTemplate="{StaticResource ErrorMessageTemplate}">
+            </ListBox>
         </DockPanel>
     </Grid>
 </UserControl>

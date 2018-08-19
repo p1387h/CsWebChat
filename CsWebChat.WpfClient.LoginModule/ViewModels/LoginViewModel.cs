@@ -8,7 +8,9 @@ using Prism.Logging;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +32,20 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
         public string Name
         {
             get { return _name; }
-            set { SetProperty<string>(ref _name, value); }
+            set
+            {
+                SetProperty<string>(ref _name, value);
+                
+                // Ensure that the login button triggers accordingly.
+                if(String.IsNullOrEmpty(_name))
+                {
+                    EnableLoginButton = false;
+                }
+                else if(Password?.Length > 0)
+                {
+                    EnableLoginButton = true;
+                }
+            }
         }
 
         public SecureString Password { get; set; }
@@ -47,6 +62,20 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             }
         }
 
+        private bool _enableLoginButton;
+        public bool EnableLoginButton
+        {
+            get { return _enableLoginButton; }
+            set { SetProperty<bool>(ref _enableLoginButton, value); }
+        }
+
+        private ObservableCollection<string> _errorMessages = new ObservableCollection<string>();
+        public ObservableCollection<string> ErrorMessages
+        {
+            get { return _errorMessages; }
+            set { SetProperty<ObservableCollection<string>>(ref _errorMessages, value); }
+        }
+
         public ICommand ButtonLogin { get; set; }
         public ICommand PasswordChangedCommand { get; set; }
 
@@ -55,14 +84,15 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
         private readonly ILoggerFacade _logger;
         private readonly AuthenticationService _authenticationService;
         private readonly AddressStorage _addressStorage;
+        private readonly PasswordHashService _passwordHashService;
 
         public LoginViewModel(IUnityContainer container, IEventAggregator eventAggregator, 
             ILoggerFacade logger, AuthenticationService authenticationService,
-            AddressStorage addressStorage)
+            AddressStorage addressStorage, PasswordHashService passwordHashService)
         {
             if (container == null || eventAggregator == null 
                 || logger == null || authenticationService == null
-                || addressStorage == null)
+                || addressStorage == null || passwordHashService == null)
                 throw new ArgumentException();
 
             this._container = container;
@@ -70,22 +100,69 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             this._logger = logger;
             this._authenticationService = authenticationService;
             this._addressStorage = addressStorage;
+            this._passwordHashService = passwordHashService;
 
             // Trigger the getter once in order to force the view to load 
             // any existing selected addresses.
             SelectedServerAddress = this._addressStorage.ServerAddress;
 
             ButtonLogin = new DelegateCommand(async () => { await this.ButtonLoginClicked(); });
-            PasswordChangedCommand = new DelegateCommand<PasswordBox>((box) => { Password = box.SecurePassword; });
+            PasswordChangedCommand = new DelegateCommand<PasswordBox>(async (box) => { await this.PasswordChangedFired(box); });
         }
 
         private async Task ButtonLoginClicked()
         {
-            var loggedIn = await this._authenticationService.LoginUser(new User());
+            ErrorMessages.Clear();
 
+            try
+            {
+                var user = new User()
+                {
+                    Name = Name,
+                    Password = this._passwordHashService.HashSecureString(Password)
+                };
+                var loginResult = await this._authenticationService.LoginUser(user);
 
+                if (loginResult.Success)
+                {
+                    throw new NotImplementedException();
+                }
+                else
+                {
+                    ErrorMessages.Add(String.Format("Login unsuccessful. Reason: {0}", loginResult.StatusCode));
 
-            throw new NotImplementedException();
+                    // Show the response of the server to the user.
+                    if (loginResult.Response != null)
+                    {
+                        var outputMap = "Field: {0}, Value: {1}";
+
+                        if (!String.IsNullOrEmpty(loginResult.Response.Name))
+                            ErrorMessages.Add(String.Format(outputMap, nameof(Name), loginResult.Response.Name));
+                        if (!String.IsNullOrEmpty(loginResult.Response.Password))
+                            ErrorMessages.Add(String.Format(outputMap, nameof(Password), loginResult.Response.Password));
+                    }
+
+                }
+            }
+            catch (HttpRequestException)
+            {
+                ErrorMessages.Add("Server could not be reached.");
+            }
+        }
+
+        private async Task PasswordChangedFired(PasswordBox box)
+        {
+            Password = box.SecurePassword;
+            
+            // Ensure that the login button triggers accordingly.
+            if(box.SecurePassword == null || box.SecurePassword.Length == 0)
+            {
+                EnableLoginButton = false;
+            }
+            else if(!String.IsNullOrEmpty(Name))
+            {
+                EnableLoginButton = true;
+            }
         }
     }
 }
