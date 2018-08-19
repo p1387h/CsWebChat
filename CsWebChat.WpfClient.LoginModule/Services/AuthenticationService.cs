@@ -18,21 +18,25 @@ namespace CsWebChat.WpfClient.LoginModule.Services
         private readonly AntiforgeryStorage _storage;
         private readonly AntiforgeryService _antiforgeryService;
         private readonly AddressStorage _addressStorage;
+        private readonly AuthenticationStorage _authenticationStorage;
         // The container is used instead of a reference to the chat request since
         // these references are disposed of after a reuqest has been made.
         private readonly IUnityContainer _container;
 
         public AuthenticationService(AntiforgeryStorage storage, AntiforgeryService antiforgeryService,
-            AddressStorage addressStorage, IUnityContainer container)
+            AddressStorage addressStorage, AuthenticationStorage authenticationStorage, 
+            IUnityContainer container)
         {
             if (storage == null || antiforgeryService == null
-                || addressStorage == null || container == null)
+                || addressStorage == null || authenticationStorage == null
+                || container == null)
                 throw new ArgumentException();
 
             this._storage = storage;
             this._antiforgeryService = antiforgeryService;
-            this._container = container;
             this._addressStorage = addressStorage;
+            this._authenticationStorage = authenticationStorage;
+            this._container = container;
         }
 
         public async Task<RegisterResult> RegisterUser(User user)
@@ -85,6 +89,11 @@ namespace CsWebChat.WpfClient.LoginModule.Services
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
+                    // Without saving the authentication cookie no further requests can be made.
+                    var cookie = request.Container.GetCookies(new Uri(address))["AuthenticationCookie"];
+                    this._authenticationStorage.AuthenticationCookieName = cookie.Name;
+                    this._authenticationStorage.AuthenticationCookieContent = cookie.Value;
+
                     return new LoginResult() { Success = true };
                 }
                 else

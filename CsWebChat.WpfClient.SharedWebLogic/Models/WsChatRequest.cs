@@ -15,15 +15,24 @@ namespace CsWebChat.WpfClient.SharedWebLogic.Models
         private readonly HttpClientHandler _handler;
 
         private readonly AntiforgeryStorage _antiforgeryStorage;
+        private readonly AuthenticationStorage _authenticationStorage;
         private readonly AddressStorage _addressStorage;
 
-        public WsChatRequest(AntiforgeryStorage antiforgeryStorage, AddressStorage addressStorage)
+        public WsChatRequest(AntiforgeryStorage antiforgeryStorage, AuthenticationStorage authenticationStorage,
+            AddressStorage addressStorage)
         {
-            if (antiforgeryStorage == null || addressStorage == null)
+            if (antiforgeryStorage == null || authenticationStorage == null
+                || addressStorage == null)
                 throw new ArgumentException();
 
             this._antiforgeryStorage = antiforgeryStorage;
+            this._authenticationStorage = authenticationStorage;
             this._addressStorage = addressStorage;
+
+            // Domain has to be set in order to prevent ArgurmentExceptions when adding
+            // the Cookie to the CookieContainer.
+            var target = new Uri(addressStorage.ServerAddress);
+            var domain = target.Host;
             Container = new CookieContainer();
 
             // Initialize the HttpClient with all the provided information inside the 
@@ -39,18 +48,25 @@ namespace CsWebChat.WpfClient.SharedWebLogic.Models
             // present.
             if (!String.IsNullOrEmpty(antiforgeryStorage.AntiforgeryCookieName))
             {
-                var target = new Uri(addressStorage.ServerAddress);
-                var cookie = new Cookie(antiforgeryStorage.AntiforgeryCookieName, antiforgeryStorage.AntiforgeryCookieContent)
+                var cookie = new Cookie(antiforgeryStorage.AntiforgeryCookieName, 
+                    antiforgeryStorage.AntiforgeryCookieContent)
                 {
-                    // Domain has to be set in order to prevent ArgurmentExceptions when adding
-                    // the Cookie to the CookieContainer.
-                    Domain = target.Host
+                    Domain = domain
                 };
                 Container.Add(cookie);
             }
             if (!String.IsNullOrEmpty(antiforgeryStorage.CsrfHeader))
             {
                 Client.DefaultRequestHeaders.Add(antiforgeryStorage.CsrfHeader, antiforgeryStorage.CsrfToken);
+            }
+            if (!String.IsNullOrEmpty(authenticationStorage.AuthenticationCookieName))
+            {
+                var cookie = new Cookie(authenticationStorage.AuthenticationCookieName,
+                    authenticationStorage.AuthenticationCookieContent)
+                {
+                    Domain = domain
+                };
+                Container.Add(cookie);
             }
         }
 
