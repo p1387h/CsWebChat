@@ -42,9 +42,10 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
         private readonly int _maxPasswordLength = 20;
         public string PasswordLengthError
         {
-            get {
-                return String.Format("Password must contain {0} to {1} characters.", 
-                    this._minPasswordLength, 
+            get
+            {
+                return String.Format("Password must contain {0} to {1} characters.",
+                    this._minPasswordLength,
                     this._maxPasswordLength);
             }
         }
@@ -76,7 +77,7 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             get { return _errorMessages; }
             set { SetProperty<ObservableCollection<string>>(ref _errorMessages, value); }
         }
-        
+
         private ObservableCollection<string> _successMesssages = new ObservableCollection<string>();
         public ObservableCollection<string> SuccessMessages
         {
@@ -129,7 +130,7 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
             try
             {
-                if(!String.IsNullOrEmpty(SelectedServerAddress))
+                if (!String.IsNullOrEmpty(SelectedServerAddress) && Uri.IsWellFormedUriString(SelectedServerAddress, UriKind.Absolute))
                 {
                     var user = new User()
                     {
@@ -156,10 +157,14 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
                             if (!String.IsNullOrEmpty(registerResult.Response.Password))
                                 ErrorMessages.Add(String.Format(outputMap, nameof(Password), registerResult.Response.Password));
                         }
-
                     }
                 }
-            } catch(HttpRequestException)
+                else
+                {
+                    ErrorMessages.Add("Please use a valid URL.");
+                }
+            }
+            catch (HttpRequestException)
             {
                 ErrorMessages.Add("Server could not be reached.");
             }

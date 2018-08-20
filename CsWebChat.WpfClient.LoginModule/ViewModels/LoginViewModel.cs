@@ -36,13 +36,13 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             set
             {
                 SetProperty<string>(ref _name, value);
-                
+
                 // Ensure that the login button triggers accordingly.
-                if(String.IsNullOrEmpty(_name))
+                if (String.IsNullOrEmpty(_name))
                 {
                     EnableLoginButton = false;
                 }
-                else if(Password?.Length > 0)
+                else if (Password?.Length > 0)
                 {
                     EnableLoginButton = true;
                 }
@@ -87,11 +87,11 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
         private readonly AddressStorage _addressStorage;
         private readonly PasswordHashService _passwordHashService;
 
-        public LoginViewModel(IUnityContainer container, IEventAggregator eventAggregator, 
+        public LoginViewModel(IUnityContainer container, IEventAggregator eventAggregator,
             ILoggerFacade logger, AuthenticationService authenticationService,
             AddressStorage addressStorage, PasswordHashService passwordHashService)
         {
-            if (container == null || eventAggregator == null 
+            if (container == null || eventAggregator == null
                 || logger == null || authenticationService == null
                 || addressStorage == null || passwordHashService == null)
                 throw new ArgumentException();
@@ -121,7 +121,7 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
             try
             {
-                if(!String.IsNullOrEmpty(SelectedServerAddress))
+                if (!String.IsNullOrEmpty(SelectedServerAddress) && Uri.IsWellFormedUriString(SelectedServerAddress, UriKind.Absolute))
                 {
                     var user = new User()
                     {
@@ -151,6 +151,10 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
                     }
                 }
+                else
+                {
+                    ErrorMessages.Add("Please use a valid URL.");
+                }
             }
             catch (HttpRequestException)
             {
@@ -161,13 +165,13 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
         private async Task PasswordChangedFired(PasswordBox box)
         {
             Password = box.SecurePassword;
-            
+
             // Ensure that the login button triggers accordingly.
-            if(box.SecurePassword == null || box.SecurePassword.Length == 0)
+            if (box.SecurePassword == null || box.SecurePassword.Length == 0)
             {
                 EnableLoginButton = false;
             }
-            else if(!String.IsNullOrEmpty(Name))
+            else if (!String.IsNullOrEmpty(Name))
             {
                 EnableLoginButton = true;
             }
