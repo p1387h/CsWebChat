@@ -35,6 +35,9 @@ namespace CsWebChat.WpfClient.LoginModule
         {
             this.InitializeServices();
             this.InitializeRegions();
+
+            // Ensure that the TabView is shown first even if the module is loaded last.
+            this._regionManager.RequestNavigate(MainWindowRegionNames.MAIN_REGION, nameof(TabView));
         }
 
         private void InitializeServices()
