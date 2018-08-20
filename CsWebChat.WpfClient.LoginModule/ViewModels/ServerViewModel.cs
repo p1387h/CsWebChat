@@ -65,7 +65,9 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
         private async Task ButtonAddClicked()
         {
-            if(!String.IsNullOrEmpty(NewServerAddress))
+            if(!String.IsNullOrEmpty(NewServerAddress) 
+                && Uri.IsWellFormedUriString(NewServerAddress, UriKind.Absolute)
+                && (NewServerAddress.StartsWith("http://") || NewServerAddress.StartsWith("https://")))
             {
                 ServerAddresses.Add(NewServerAddress);
                 this._addressStorage.Servers.Add(NewServerAddress);

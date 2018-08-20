@@ -47,7 +47,10 @@
                         Content="Add"
                         Command="{Binding ButtonAdd}">
                 </Button>
-                <TextBox Text="{Binding NewServerAddress, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"></TextBox>
+                <TextBox Text="{Binding NewServerAddress, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                         Controls:TextBoxHelper.ClearTextButton="True"
+                         Controls:TextBoxHelper.Watermark="http:// or https://">
+                </TextBox>
             </DockPanel>
             <TextBlock DockPanel.Dock="Top"
                        Margin="0,0,0,4">
