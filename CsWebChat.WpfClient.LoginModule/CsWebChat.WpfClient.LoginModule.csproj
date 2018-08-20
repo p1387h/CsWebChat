@@ -165,6 +165,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\CsWebChat.WpfClient.Events\CsWebChat.WpfClient.Events.csproj">
+      <Project>{a1099b13-cb82-407a-9597-94549b31d653}</Project>
+      <Name>CsWebChat.WpfClient.Events</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CsWebChat.WpfClient.Regions\CsWebChat.WpfClient.Regions.csproj">
       <Project>{fe0db377-481d-4d89-be31-51053133f797}</Project>
       <Name>CsWebChat.WpfClient.Regions</Name>

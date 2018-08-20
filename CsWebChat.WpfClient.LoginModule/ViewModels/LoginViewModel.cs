@@ -1,4 +1,5 @@
-﻿using CsWebChat.WpfClient.LoginModule.Events;
+﻿using CsWebChat.WpfClient.Events;
+using CsWebChat.WpfClient.LoginModule.Events;
 using CsWebChat.WpfClient.LoginModule.Models;
 using CsWebChat.WpfClient.LoginModule.Services;
 using CsWebChat.WpfClient.SharedWebLogic.Models;
@@ -141,7 +142,8 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
                     if (loginResult.Success)
                     {
-                        throw new NotImplementedException();
+                        this._eventAggregator.GetEvent<LoginSuccessEvent>()
+                            .Publish();
                     }
                     else
                     {
