@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CsWebChat.WpfClient.LoginModule.Views
+namespace CsWebChat.WpfClient.ChatModule.Views
 {
     /// <summary>
-    /// Interaction logic for TabView.xaml
+    /// Interaction logic for ChatView.xaml
     /// </summary>
-    public partial class TabView : UserControl
+    public partial class ChatView : UserControl
     {
-        public TabView()
+        public ChatView()
         {
             InitializeComponent();
         }

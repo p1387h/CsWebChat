@@ -1,4 +1,6 @@
-﻿using Microsoft.Practices.Unity;
+﻿using CsWebChat.WpfClient.ChatModule.Views;
+using CsWebChat.WpfClient.Regions;
+using Microsoft.Practices.Unity;
 using Prism.Modularity;
 using Prism.Regions;
 using System;
@@ -31,12 +33,16 @@ namespace CsWebChat.WpfClient.ChatModule
             // Views registered for the possibility of INavigationAware returning false and
             // the RegionManager therefore requiring a new instance. The name is needed since
             // a Uri is used for resolving the type when navigating.
-            //this._container.RegisterType<object, T>(nameof(T));
+            this._container.RegisterType<object, ChatSplitView>(nameof(ChatSplitView));
+            this._container.RegisterType<object, UserView>(nameof(UserView));
+            this._container.RegisterType<object, ChatView>(nameof(ChatView));
         }
 
         private void InitializeViews()
         {
-
+            this._regionManager.RegisterViewWithRegion(MainWindowRegionNames.MAIN_REGION, typeof(ChatSplitView));
+            this._regionManager.RegisterViewWithRegion(ChatModuleRegionNames.CHAT_REGION, typeof(ChatView));
+            this._regionManager.RegisterViewWithRegion(ChatModuleRegionNames.USER_REGION, typeof(UserView));
         }
     }
 }

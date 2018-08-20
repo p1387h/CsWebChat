@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CsWebChat.WpfClient.LoginModule.ViewModels
 {
-    class TabViewModel : BindableBase
+    class LoginTabViewModel : BindableBase
     {
     }
 }

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="CsWebChat.WpfClient.LoginModule.Views.TabView"
+﻿<UserControl x:Class="CsWebChat.WpfClient.LoginModule.Views.LoginTabView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -29,7 +29,7 @@
                 <!-- AnimatedTabControl -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
+
             <!-- Header for TabControl items -->
             <Style TargetType="Controls:MetroTabItem" BasedOn="{StaticResource MetroTabItem}">
                 <Setter Property="Header"
