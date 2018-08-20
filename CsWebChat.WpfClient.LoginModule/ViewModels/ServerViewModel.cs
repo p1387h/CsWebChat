@@ -1,4 +1,5 @@
-﻿using CsWebChat.WpfClient.SharedWebLogic.Models;
+﻿using CsWebChat.WpfClient.LoginModule.Events;
+using CsWebChat.WpfClient.SharedWebLogic.Models;
 using Microsoft.Practices.Unity;
 using Prism.Commands;
 using Prism.Events;
@@ -69,6 +70,11 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
                 ServerAddresses.Add(NewServerAddress);
                 this._addressStorage.Servers.Add(NewServerAddress);
                 NewServerAddress = null;
+
+                // Notify all other viewmodels that a new server was added.
+                // -> The model does NOT implement INotifyPropertyChanged!
+                this._eventAggregator.GetEvent<ServerAddedEvent>()
+                    .Publish();
             }
         }
     }

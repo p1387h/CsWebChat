@@ -89,6 +89,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\ServerAddedEvent.cs" />
     <Compile Include="Models\CsrfResponse.cs" />
     <Compile Include="Models\LoginResponse.cs" />
     <Compile Include="Models\LoginResult.cs" />

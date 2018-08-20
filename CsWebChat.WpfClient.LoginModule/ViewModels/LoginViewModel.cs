@@ -1,4 +1,5 @@
-﻿using CsWebChat.WpfClient.LoginModule.Models;
+﻿using CsWebChat.WpfClient.LoginModule.Events;
+using CsWebChat.WpfClient.LoginModule.Models;
 using CsWebChat.WpfClient.LoginModule.Services;
 using CsWebChat.WpfClient.SharedWebLogic.Models;
 using Microsoft.Practices.Unity;
@@ -105,6 +106,10 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             // Trigger the getter once in order to force the view to load 
             // any existing selected addresses.
             SelectedServerAddress = this._addressStorage.ServerAddress;
+
+            // Ensure that the visible servers are updated.
+            this._eventAggregator.GetEvent<ServerAddedEvent>()
+                .Subscribe(() => { RaisePropertyChanged(nameof(ServerAddresses)); }, ThreadOption.UIThread);
 
             ButtonLogin = new DelegateCommand(async () => { await this.ButtonLoginClicked(); });
             PasswordChangedCommand = new DelegateCommand<PasswordBox>(async (box) => { await this.PasswordChangedFired(box); });
