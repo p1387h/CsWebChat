@@ -39,7 +39,31 @@
     <Grid Width="300"
           Height="200"
           Background="White">
+        <!-- Content shown when sending information to server -->
+        <Controls:ProgressRing>
+            <Controls:ProgressRing.Style>
+                <Style TargetType="Controls:ProgressRing">
+                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding EnableProgressRing}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Controls:ProgressRing.Style>
+        </Controls:ProgressRing>
+        <!-- Content shown when inserting information -->
         <DockPanel>
+            <DockPanel.Style>
+                <Style TargetType="DockPanel">
+                    <Setter Property="Visibility" Value="Visible"></Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding EnableProgressRing}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DockPanel.Style>
             <DockPanel.Resources>
                 <Style TargetType="Label">
                     <Setter Property="Width" Value="75"></Setter>

@@ -85,6 +85,13 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             set { SetProperty<ObservableCollection<string>>(ref _successMesssages, value); }
         }
 
+        private bool _enableProgressRing;
+        public bool EnableProgressRing
+        {
+            get { return _enableProgressRing; }
+            set { SetProperty<bool>(ref _enableProgressRing, value); }
+        }
+
         public ICommand ButtonRegister { get; set; }
         public ICommand PasswordChangedCommand { get; set; }
 
@@ -132,6 +139,8 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             {
                 if (!String.IsNullOrEmpty(SelectedServerAddress) && Uri.IsWellFormedUriString(SelectedServerAddress, UriKind.Absolute))
                 {
+                    EnableProgressRing = true;
+
                     var user = new User()
                     {
                         Name = Name,
@@ -167,6 +176,10 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             catch (HttpRequestException)
             {
                 ErrorMessages.Add("Server could not be reached.");
+            }
+            finally
+            {
+                EnableProgressRing = false;
             }
         }
 
