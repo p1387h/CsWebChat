@@ -134,6 +134,10 @@
       <Project>{fe0db377-481d-4d89-be31-51053133f797}</Project>
       <Name>CsWebChat.WpfClient.Regions</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CsWebChat.WpfCLient.WebLogicModule\CsWebChat.WpfCLient.WebLogicModule.csproj">
+      <Project>{a7f2bc74-b413-42da-8a9b-b3d32cc6361b}</Project>
+      <Name>CsWebChat.WpfCLient.WebLogicModule</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\ChatSplitView.xaml">
@@ -149,7 +153,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <Import Project="..\CsWebChat.WpfClient.SharedWebLogic\CsWebChat.WpfClient.SharedWebLogic.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>IF NOT EXIST "$(SolutionDir)\CsWebChat.WpfClient\bin\Debug\modules\ChatModule\" MKDIR "$(SolutionDir)\CsWebChat.WpfClient\bin\Debug\modules\ChatModule\"

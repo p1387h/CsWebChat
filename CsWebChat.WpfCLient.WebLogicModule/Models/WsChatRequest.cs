@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CsWebChat.WpfClient.SharedWebLogic.Models
+namespace CsWebChat.WpfClient.WebLogicModule.Models
 {
     public class WsChatRequest : IDisposable
     {

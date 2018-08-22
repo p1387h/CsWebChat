@@ -1,8 +1,6 @@
 ﻿using CsWebChat.WpfClient.LoginModule.Services;
 using CsWebChat.WpfClient.LoginModule.Views;
 using CsWebChat.WpfClient.Regions;
-using CsWebChat.WpfClient.SharedWebLogic.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Practices.Unity;
 using Prism.Logging;
 using Prism.Modularity;
@@ -39,14 +37,6 @@ namespace CsWebChat.WpfClient.LoginModule
 
         private void InitializeServices()
         {
-            var addressStorage = new AddressStorage();
-            addressStorage.Servers.Add("http://localhost:5000/");
-
-            this._container.RegisterInstance<AuthenticationStorage>(new AuthenticationStorage());
-            this._container.RegisterInstance<AntiforgeryStorage>(new AntiforgeryStorage());
-            this._container.RegisterInstance<AddressStorage>(addressStorage);
-
-            this._container.RegisterType<WsChatRequest>();
             this._container.RegisterType<AntiforgeryService>();
             this._container.RegisterType<AuthenticationService>();
 

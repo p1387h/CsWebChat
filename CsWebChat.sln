@@ -15,18 +15,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsWebChat.WpfClient.Regions
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsWebChat.WpfClient.LoginModule", "CsWebChat.WpfClient.LoginModule\CsWebChat.WpfClient.LoginModule.csproj", "{D44B31D3-A465-42D0-A142-4185E43CB053}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CsWebChat.WpfClient.SharedWebLogic", "CsWebChat.WpfClient.SharedWebLogic\CsWebChat.WpfClient.SharedWebLogic.shproj", "{175B7EF3-9A88-4DBB-931B-CEF2923FBC02}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsWebChat.WpfClient.ChatModule", "CsWebChat.WpfClient.ChatModule\CsWebChat.WpfClient.ChatModule.csproj", "{D1E368FA-D195-40D2-848C-1ACE4534B52B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsWebChat.WpfClient.Events", "CsWebChat.WpfClient.Events\CsWebChat.WpfClient.Events.csproj", "{A1099B13-CB82-407A-9597-94549B31D653}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsWebChat.WpfCLient.WebLogicModule", "CsWebChat.WpfCLient.WebLogicModule\CsWebChat.WpfCLient.WebLogicModule.csproj", "{A7F2BC74-B413-42DA-8A9B-B3D32CC6361B}"
+EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		CsWebChat.WpfClient.SharedWebLogic\CsWebChat.WpfClient.SharedWebLogic.projitems*{175b7ef3-9a88-4dbb-931b-cef2923fbc02}*SharedItemsImports = 13
-		CsWebChat.WpfClient.SharedWebLogic\CsWebChat.WpfClient.SharedWebLogic.projitems*{d1e368fa-d195-40d2-848c-1ace4534b52b}*SharedItemsImports = 4
-		CsWebChat.WpfClient.SharedWebLogic\CsWebChat.WpfClient.SharedWebLogic.projitems*{d44b31d3-a465-42d0-a142-4185e43cb053}*SharedItemsImports = 4
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -64,6 +59,10 @@ Global
 		{A1099B13-CB82-407A-9597-94549B31D653}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1099B13-CB82-407A-9597-94549B31D653}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1099B13-CB82-407A-9597-94549B31D653}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7F2BC74-B413-42DA-8A9B-B3D32CC6361B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7F2BC74-B413-42DA-8A9B-B3D32CC6361B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7F2BC74-B413-42DA-8A9B-B3D32CC6361B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7F2BC74-B413-42DA-8A9B-B3D32CC6361B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

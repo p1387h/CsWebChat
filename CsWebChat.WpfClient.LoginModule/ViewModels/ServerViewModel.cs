@@ -1,5 +1,5 @@
 ﻿using CsWebChat.WpfClient.LoginModule.Events;
-using CsWebChat.WpfClient.SharedWebLogic.Models;
+using CsWebChat.WpfClient.WebLogicModule.Models;
 using Microsoft.Practices.Unity;
 using Prism.Commands;
 using Prism.Events;

@@ -1,5 +1,5 @@
 ﻿using CsWebChat.WpfClient.LoginModule.Models;
-using CsWebChat.WpfClient.SharedWebLogic.Models;
+using CsWebChat.WpfClient.WebLogicModule.Models;
 using Microsoft.Practices.Unity;
 using Newtonsoft.Json;
 using System;

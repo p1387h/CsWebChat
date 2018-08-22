@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CsWebChat.WpfClient.SharedWebLogic.Models
+namespace CsWebChat.WpfClient.WebLogicModule.Models
 {
     public class AntiforgeryStorage
     {
