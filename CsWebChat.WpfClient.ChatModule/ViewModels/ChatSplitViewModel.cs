@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace CsWebChat.WpfClient.ChatModule.ViewModels
 {
-    class ChatSplitViewModel : BindableBase
+    class ChatSplitViewModel : BindableBase, INavigationAware
     {
         private readonly IRegionManager _regionManager;
         private readonly IEventAggregator _eventAggregator;
@@ -29,15 +29,23 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
             this._regionManager = regionManager;
             this._eventAggregator = eventAggregator;
             this._logger = logger;
-
-            this._eventAggregator.GetEvent<LoginSuccessEvent>()
-                .Subscribe(this.SwitchToTabView, ThreadOption.UIThread);
         }
 
-        private void SwitchToTabView()
+
+        // INavigationAware:
+        public async void OnNavigatedTo(NavigationContext navigationContext)
         {
-            this._regionManager.RequestNavigate(MainWindowRegionNames.MAIN_REGION, 
-                new Uri(nameof(ChatSplitView), UriKind.Relative));
+            
+        }
+
+        public bool IsNavigationTarget(NavigationContext navigationContext)
+        {
+            return true;
+        }
+
+        public async void OnNavigatedFrom(NavigationContext navigationContext)
+        {
+            
         }
     }
 }

@@ -2,12 +2,14 @@
 using CsWebChat.WpfClient.LoginModule.Events;
 using CsWebChat.WpfClient.LoginModule.Models;
 using CsWebChat.WpfClient.LoginModule.Services;
+using CsWebChat.WpfClient.Regions;
 using CsWebChat.WpfClient.WebLogicModule.Models;
 using Microsoft.Practices.Unity;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Logging;
 using Prism.Mvvm;
+using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -91,22 +93,26 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
         private readonly IUnityContainer _container;
         private readonly IEventAggregator _eventAggregator;
         private readonly ILoggerFacade _logger;
+        private readonly IRegionManager _regionManager;
         private readonly AuthenticationService _authenticationService;
         private readonly AddressStorage _addressStorage;
         private readonly PasswordHashService _passwordHashService;
 
         public LoginViewModel(IUnityContainer container, IEventAggregator eventAggregator,
             ILoggerFacade logger, AuthenticationService authenticationService,
-            AddressStorage addressStorage, PasswordHashService passwordHashService)
+            AddressStorage addressStorage, PasswordHashService passwordHashService,
+            IRegionManager regionManager)
         {
             if (container == null || eventAggregator == null
-                || logger == null || authenticationService == null
-                || addressStorage == null || passwordHashService == null)
+                || logger == null || regionManager == null
+                || authenticationService == null || addressStorage == null
+                || passwordHashService == null)
                 throw new ArgumentException();
 
             this._container = container;
             this._eventAggregator = eventAggregator;
             this._logger = logger;
+            this._regionManager = regionManager;
             this._authenticationService = authenticationService;
             this._addressStorage = addressStorage;
             this._passwordHashService = passwordHashService;
@@ -142,8 +148,7 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
                     if (loginResult.Success)
                     {
-                        this._eventAggregator.GetEvent<LoginSuccessEvent>()
-                            .Publish();
+                        this.ChangeViewToSuccessfulChatLogin();
                     }
                     else
                     {
@@ -175,6 +180,16 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             {
                 EnableProgressRing = false;
             }
+        }
+
+        private void ChangeViewToSuccessfulChatLogin()
+        {
+            this._regionManager.RequestNavigate(MainWindowRegionNames.MAIN_REGION,
+                new Uri("ChatSplitView", UriKind.Relative));
+            this._regionManager.RequestNavigate(ChatModuleRegionNames.USER_REGION,
+                new Uri("UserView", UriKind.Relative));
+            this._regionManager.RequestNavigate(ChatModuleRegionNames.CHAT_REGION,
+                new Uri("ChatView", UriKind.Relative));
         }
 
         private async Task PasswordChangedFired(PasswordBox box)

@@ -18,6 +18,9 @@ namespace CsWebChat.WpfClient.ChatModule
 
         public ChatModule(IUnityContainer container, IRegionManager regionManager)
         {
+            if (container == null || regionManager == null)
+                throw new ArgumentException();
+
             this._container = container;
             this._regionManager = regionManager;
         }
@@ -40,9 +43,7 @@ namespace CsWebChat.WpfClient.ChatModule
 
         private void InitializeViews()
         {
-            this._regionManager.RegisterViewWithRegion(MainWindowRegionNames.MAIN_REGION, typeof(ChatSplitView));
-            this._regionManager.RegisterViewWithRegion(ChatModuleRegionNames.CHAT_REGION, typeof(ChatView));
-            this._regionManager.RegisterViewWithRegion(ChatModuleRegionNames.USER_REGION, typeof(UserView));
+
         }
     }
 }
