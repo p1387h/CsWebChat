@@ -13,7 +13,8 @@
              prism:ViewModelLocator.AutoWireViewModel="True"
              
              FontFamily="Verdana">
-    <Grid Background="white">
+    <Grid Background="white"
+          prism:RegionManager.RegionContext="{Binding ConnectionRegionContext}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
