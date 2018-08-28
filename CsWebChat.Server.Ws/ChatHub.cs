@@ -18,9 +18,9 @@ namespace CsWebChat.Server.Ws
         private readonly Dictionary<string, string> _mappedConnectionIds = new Dictionary<string, string>();
         private readonly IMapper _mapper;
         private readonly DAL.ChatContext _db;
-        private readonly ILogger _logger;
+        private readonly ILogger<ChatHub> _logger;
 
-        public ChatHub(DAL.ChatContext db, ILogger logger)
+        public ChatHub(DAL.ChatContext db, ILogger<ChatHub> logger)
         {
             if (db == null || logger == null)
                 throw new ArgumentException();
