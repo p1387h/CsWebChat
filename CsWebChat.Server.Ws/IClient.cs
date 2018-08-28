@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CsWebChat.Server.Ws
 {
     public interface IClient
     {
-        void ReceiveMessage(User sender, Message message);
+        Task ReceiveMessageAsync(User sender, Message message);
     }
 }

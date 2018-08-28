@@ -15,10 +15,6 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
 {
     class ChatSplitViewModel : BindableBase, INavigationAware
     {
-        // Set as RegionContext in order to make the connection available to all 
-        // other hostet child views.
-        public HubConnection ConnectionRegionContext { get { return this._connection; } }
-
         private readonly IRegionManager _regionManager;
         private readonly IEventAggregator _eventAggregator;
         private readonly ILoggerFacade _logger;
@@ -35,6 +31,10 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
             this._eventAggregator = eventAggregator;
             this._logger = logger;
             this._connection = connection;
+
+            // Set as RegionContext in order to make the connection available to all 
+            // other hostet child views.
+            this._regionManager.Regions[MainWindowRegionNames.MAIN_REGION].Context = connection;
         }
 
 
@@ -54,7 +54,7 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
 
         public void OnNavigatedFrom(NavigationContext navigationContext)
         {
-            Task.Run(async () => { await ConnectionRegionContext.StopAsync(); });
+            Task.Run(async () => { await this._connection.StopAsync(); });
         }
     }
 }

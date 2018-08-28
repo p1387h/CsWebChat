@@ -71,7 +71,7 @@ namespace CsWebChat.Server.Ws
                 {
                     var messageDb = this._mapper.Map<DAL.Message>(message);
 
-                    client.ReceiveMessage(sender, message);
+                    await client.ReceiveMessageAsync(sender, message);
 
                     this._db.Message.Add(messageDb);
                     await this._db.SaveChangesAsync();
