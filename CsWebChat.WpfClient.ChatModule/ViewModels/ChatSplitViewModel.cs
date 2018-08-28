@@ -1,5 +1,4 @@
 ﻿using CsWebChat.WpfClient.ChatModule.Views;
-using CsWebChat.WpfClient.Events;
 using CsWebChat.WpfClient.Regions;
 using Prism.Events;
 using Prism.Logging;

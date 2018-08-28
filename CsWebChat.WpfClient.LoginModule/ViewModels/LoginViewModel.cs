@@ -1,5 +1,4 @@
-﻿using CsWebChat.WpfClient.Events;
-using CsWebChat.WpfClient.LoginModule.Events;
+﻿using CsWebChat.WpfClient.LoginModule.Events;
 using CsWebChat.WpfClient.LoginModule.Models;
 using CsWebChat.WpfClient.LoginModule.Services;
 using CsWebChat.WpfClient.Regions;
