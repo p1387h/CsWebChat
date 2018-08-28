@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsWebChat.WpfClient.ChatMod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsWebChat.WpfClient.Events", "CsWebChat.WpfClient.Events\CsWebChat.WpfClient.Events.csproj", "{A1099B13-CB82-407A-9597-94549B31D653}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsWebChat.WpfCLient.WebLogicModule", "CsWebChat.WpfCLient.WebLogicModule\CsWebChat.WpfCLient.WebLogicModule.csproj", "{A7F2BC74-B413-42DA-8A9B-B3D32CC6361B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsWebChat.WpfClient.WebLogicModule", "CsWebChat.WpfClient.WebLogicModule\CsWebChat.WpfClient.WebLogicModule.csproj", "{A7F2BC74-B413-42DA-8A9B-B3D32CC6361B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -172,9 +172,9 @@
       <Project>{fe0db377-481d-4d89-be31-51053133f797}</Project>
       <Name>CsWebChat.WpfClient.Regions</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CsWebChat.WpfCLient.WebLogicModule\CsWebChat.WpfCLient.WebLogicModule.csproj">
+    <ProjectReference Include="..\CsWebChat.WpfClient.WebLogicModule\CsWebChat.WpfClient.WebLogicModule.csproj">
       <Project>{a7f2bc74-b413-42da-8a9b-b3d32cc6361b}</Project>
-      <Name>CsWebChat.WpfCLient.WebLogicModule</Name>
+      <Name>CsWebChat.WpfClient.WebLogicModule</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
