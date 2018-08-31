@@ -22,13 +22,13 @@ namespace CsWebChat.WpfClient.LoginModule.Validators
 
             if(String.IsNullOrEmpty(name))
             {
-                if(name.Equals(""))
+                if(name == null)
                 {
-                    result = new ValidationResult(false, "Name must not be empty.");
+                    result = new ValidationResult(false, "Name must be set.");
                 }
                 else
                 {
-                    result = new ValidationResult(false, "Name must be set.");
+                    result = new ValidationResult(false, "Name must not be empty.");
                 }
             }
             else
