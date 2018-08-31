@@ -51,6 +51,8 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             }
         }
 
+        // Reference to the PasswordBox in order to clear it when changing views.
+        private PasswordBox _passwordBox;
         public SecureString Password { get; set; }
         public List<string> ServerAddresses { get { return this._addressStorage.Servers; } }
 
@@ -147,11 +149,14 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
                     if (loginResult.Success)
                     {
+                        this._eventAggregator.GetEvent<LoginEvent>().Publish(true);
+                        this.RemoveLoginInformation();
                         this.ChangeViewToSuccessfulChatLogin();
                     }
                     else
                     {
                         ErrorMessages.Add(String.Format("Login unsuccessful. Reason: {0}", loginResult.StatusCode));
+                        this._eventAggregator.GetEvent<LoginEvent>().Publish(false);
 
                         // Show the response of the server to the user.
                         if (loginResult.Response != null)
@@ -163,7 +168,6 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
                             if (!String.IsNullOrEmpty(loginResult.Response.Password))
                                 ErrorMessages.Add(String.Format(outputMap, nameof(Password), loginResult.Response.Password));
                         }
-
                     }
                 }
                 else
@@ -181,6 +185,17 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             }
         }
 
+        private void RemoveLoginInformation()
+        {
+            this._passwordBox?.SecurePassword?.Dispose();
+            if (this._passwordBox != null)
+                this._passwordBox.Password = null;
+            this._passwordBox = null;
+            Password?.Dispose();
+            Password = null;
+            Name = null;
+        }
+
         private void ChangeViewToSuccessfulChatLogin()
         {
             this._regionManager.RequestNavigate(MainWindowRegionNames.MAIN_REGION,
@@ -193,6 +208,7 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
         private async Task PasswordChangedFired(PasswordBox box)
         {
+            this._passwordBox = box;
             Password = box.SecurePassword;
 
             // Ensure that the login button triggers accordingly.

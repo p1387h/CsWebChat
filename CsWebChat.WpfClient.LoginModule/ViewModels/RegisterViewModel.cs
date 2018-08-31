@@ -57,6 +57,8 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             set { SetProperty<bool>(ref _passwordLengthOk, value); }
         }
 
+        // Reference to the PasswordBox in order to clear it when changing views.
+        private PasswordBox _passwordBox;
         public SecureString Password { get; set; }
         public List<string> ServerAddresses { get { return this._addressStorage.Servers; } }
 
@@ -125,9 +127,23 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             // Ensure that the visible servers are updated.
             this._eventAggregator.GetEvent<ServerAddedEvent>()
                 .Subscribe(() => { RaisePropertyChanged(nameof(ServerAddresses)); }, ThreadOption.UIThread);
+            // Ensure that existing information are removed when logging in.
+            this._eventAggregator.GetEvent<LoginEvent>()
+                .Subscribe(this.HandleSuccessfulLogin, ThreadOption.UIThread, false, (b) => { return b; });
 
             ButtonRegister = new DelegateCommand(async () => { await this.ButtonRegisterClicked(); });
             PasswordChangedCommand = new DelegateCommand<PasswordBox>(async (box) => { await this.PasswordChangedFired(box); });
+        }
+
+        private void HandleSuccessfulLogin(bool result)
+        {
+            this._passwordBox?.SecurePassword?.Dispose();
+            if (this._passwordBox != null)
+                this._passwordBox.Password = null;
+            this._passwordBox = null;
+            Password?.Dispose();
+            Password = null;
+            Name = null;
         }
 
         private async Task ButtonRegisterClicked()
@@ -151,6 +167,8 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
                     if (registerResult.Success)
                     {
                         SuccessMessages.Add("Registration successful.");
+                        Name = null;
+                        Password.Dispose();
                     }
                     else
                     {
@@ -185,6 +203,7 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
         private async Task PasswordChangedFired(PasswordBox box)
         {
+            this._passwordBox = box;
             var passwordLength = box.SecurePassword.Length;
 
             Password = box.SecurePassword;
