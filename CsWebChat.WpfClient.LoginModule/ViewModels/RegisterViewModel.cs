@@ -129,13 +129,13 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
                 .Subscribe(() => { RaisePropertyChanged(nameof(ServerAddresses)); }, ThreadOption.UIThread);
             // Ensure that existing information are removed when logging in.
             this._eventAggregator.GetEvent<LoginEvent>()
-                .Subscribe(this.HandleSuccessfulLogin, ThreadOption.UIThread, false, (b) => { return b; });
+                .Subscribe(this.RemoveLoginInformation, ThreadOption.UIThread, false, (b) => { return b; });
 
             ButtonRegister = new DelegateCommand(async () => { await this.ButtonRegisterClicked(); });
             PasswordChangedCommand = new DelegateCommand<PasswordBox>(async (box) => { await this.PasswordChangedFired(box); });
         }
 
-        private void HandleSuccessfulLogin(bool result)
+        private void RemoveLoginInformation(bool result)
         {
             this._passwordBox?.SecurePassword?.Dispose();
             if (this._passwordBox != null)
@@ -167,8 +167,8 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
                     if (registerResult.Success)
                     {
                         SuccessMessages.Add("Registration successful.");
-                        Name = null;
-                        Password.Dispose();
+
+                        this.RemoveLoginInformation(true);
                     }
                     else
                     {
