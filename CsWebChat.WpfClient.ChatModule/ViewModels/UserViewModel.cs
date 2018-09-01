@@ -16,7 +16,7 @@ using System.Windows;
 
 namespace CsWebChat.WpfClient.ChatModule.ViewModels
 {
-    class UserViewModel : BindableBase, INavigationAware
+    class UserViewModel : BindableBase, INavigationAware, IRegionMemberLifetime
     {
         private ObservableCollection<User> _users;
         public ObservableCollection<User> Users
@@ -48,10 +48,18 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
         }
 
 
+        // IRegionMemberLifetime:
+        public bool KeepAlive
+        {
+            get { return false; }
+        }
+
+
         // INavigationAware:
         public bool IsNavigationTarget(NavigationContext navigationContext)
         {
-            return true;
+            // Force instantiation and requesting updated list of other users.
+            return false;
         }
 
         public void OnNavigatedFrom(NavigationContext navigationContext)
@@ -59,13 +67,23 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
 
         }
 
-        public void OnNavigatedTo(NavigationContext navigationContext)
+        public async void OnNavigatedTo(NavigationContext navigationContext)
         {
             this._connection = (HubConnection)this._regionManager.Regions[MainWindowRegionNames.MAIN_REGION].Context;
-            this._connection.On<string, UserState>("NotifyUserStateChange", this.HandleStateChange);
+            this._connection.On<IEnumerable<string>, UserState>("NotifyUsersStateChangesAsync", this.HandleStateChanges);
+            
+            await this._connection.SendAsync("RequestOtherUserStates");
         }
 
-        private async void HandleStateChange(string name, UserState state)
+        private async void HandleStateChanges(IEnumerable<string> names, UserState state)
+        {
+            foreach (var name in names)
+            {
+                await this.HandleStateChangeAsync(name, state);
+            }
+        }
+
+        private async Task HandleStateChangeAsync(string name, UserState state)
         {
             if (state == UserState.Online)
             {

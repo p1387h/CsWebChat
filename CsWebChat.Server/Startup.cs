@@ -90,6 +90,7 @@ namespace CsWebChat.Server
             services.AddSingleton<IAuthorizationHandler, MessageAvailabilityHandler>();
             services.AddSingleton<IAuthorizationHandler, UserNameHandler>();
             services.AddSingleton<IMapper>(mapper);
+            services.AddSingleton<ChatHubStorage>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

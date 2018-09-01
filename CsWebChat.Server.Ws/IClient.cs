@@ -9,6 +9,6 @@ namespace CsWebChat.Server.Ws
     public interface IClient
     {
         Task ReceiveMessageAsync(Message message);
-        Task NotifyUserStateChange(string username, UserState state);
+        Task NotifyUsersStateChangesAsync(IEnumerable<string> usernames, UserState state);
     }
 }
