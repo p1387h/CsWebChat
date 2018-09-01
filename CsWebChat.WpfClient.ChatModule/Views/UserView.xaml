@@ -15,6 +15,8 @@
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
              
+             xmlns:converter="clr-namespace:CsWebChat.WpfClient.ChatModule.Converter"
+             
              FontFamily="Verdana">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -28,6 +30,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <converter:ConnectionStateStringConverter x:Key="ConnectionStateConverter"></converter:ConnectionStateStringConverter>
             <DataTemplate x:Key="UserTemplate">
                 <TextBlock Text="{Binding Name}"
                            TextAlignment="Right"
@@ -39,13 +42,24 @@
     <DockPanel Background="White">
         <DockPanel DockPanel.Dock="Top"
                    Margin="10,10">
-            <TextBlock DockPanel.Dock="Left"
+            <DockPanel DockPanel.Dock="Top">
+                <TextBlock DockPanel.Dock="Left"
                        Text="Other users online:">
-            </TextBlock>
-            <TextBlock DockPanel.Dock="Right"
+                </TextBlock>
+                <TextBlock DockPanel.Dock="Right"
                        Text="{Binding Users.Count}"
                        TextAlignment="Right">
-            </TextBlock>
+                </TextBlock>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Top">
+                <TextBlock DockPanel.Dock="Left"
+                       Text="Connection:">
+                </TextBlock>
+                <TextBlock DockPanel.Dock="Right"
+                       Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateConverter}}"
+                       TextAlignment="Right">
+                </TextBlock>
+            </DockPanel>
         </DockPanel>
         <ListView DockPanel.Dock="Top"
                   ItemsSource="{Binding Users}"

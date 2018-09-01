@@ -27,6 +27,13 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
             set { SetProperty<ObservableCollection<User>>(ref _users, value); }
         }
 
+        private ConnectionState _connectionState;
+        public ConnectionState ConnectionState
+        {
+            get { return _connectionState; }
+            set { SetProperty<ConnectionState>(ref _connectionState, value); }
+        }
+
         private HubConnection _connection;
 
         private readonly IUnityContainer _container;
@@ -56,11 +63,13 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
         {
             if (state == WebSocketState.Open)
             {
+                ConnectionState = ConnectionState.Connected;
                 await this._connection.SendAsync("RequestOtherUserStates");
             }
             else if (state == WebSocketState.Closed)
             {
-                throw new NotImplementedException();
+                ConnectionState = ConnectionState.Disconnected;
+                await Application.Current.Dispatcher.InvokeAsync(() => { Users.Clear(); });
             }
         }
 
