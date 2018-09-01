@@ -1,6 +1,8 @@
 ﻿using CsWebChat.WpfClient.LoginModule.Events;
 using CsWebChat.WpfClient.LoginModule.Models;
 using CsWebChat.WpfClient.LoginModule.Services;
+using CsWebChat.WpfClient.LoginModule.Views;
+using CsWebChat.WpfClient.Regions;
 using CsWebChat.WpfClient.WebLogicModule.Models;
 using Microsoft.Practices.Unity;
 using Newtonsoft.Json;
@@ -8,6 +10,7 @@ using Prism.Commands;
 using Prism.Events;
 using Prism.Logging;
 using Prism.Mvvm;
+using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -57,8 +60,6 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             set { SetProperty<bool>(ref _passwordLengthOk, value); }
         }
 
-        // Reference to the PasswordBox in order to clear it when changing views.
-        private PasswordBox _passwordBox;
         public SecureString Password { get; set; }
         public List<string> ServerAddresses { get { return this._addressStorage.Servers; } }
 
@@ -100,22 +101,26 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
         private readonly IUnityContainer _container;
         private readonly IEventAggregator _eventAggregator;
         private readonly ILoggerFacade _logger;
+        private readonly IRegionManager _regionManager;
         private readonly AuthenticationService _authenticationService;
         private readonly AddressStorage _addressStorage;
         private readonly PasswordHashService _passwordHashService;
 
         public RegisterViewModel(IUnityContainer container, IEventAggregator eventAggregator,
-            ILoggerFacade logger, AuthenticationService authenticationService,
-            AddressStorage addressStorage, PasswordHashService passwordHashService)
+            ILoggerFacade logger, IRegionManager regionManager,
+            AuthenticationService authenticationService, AddressStorage addressStorage,
+            PasswordHashService passwordHashService)
         {
             if (container == null || eventAggregator == null
-                || logger == null || authenticationService == null
-                || addressStorage == null || passwordHashService == null)
+                || logger == null || regionManager == null
+                || authenticationService == null || addressStorage == null
+                || passwordHashService == null)
                 throw new ArgumentException();
 
             this._container = container;
             this._eventAggregator = eventAggregator;
             this._logger = logger;
+            this._regionManager = regionManager;
             this._authenticationService = authenticationService;
             this._addressStorage = addressStorage;
             this._passwordHashService = passwordHashService;
@@ -137,10 +142,18 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
         private void RemoveLoginInformation(bool result)
         {
-            this._passwordBox?.SecurePassword?.Dispose();
-            if (this._passwordBox != null)
-                this._passwordBox.Password = null;
-            this._passwordBox = null;
+            var view = this._regionManager.Regions[LoginModuleRegionNames.TAB_REGION]
+                .Views
+                .OfType<RegisterView>()
+                .SingleOrDefault();
+            var passwordBox = view?.PasswordBoxRegister;
+
+            if(passwordBox != null)
+            {
+                passwordBox.SecurePassword.Dispose();
+                passwordBox.Password = null;
+            }
+
             Password?.Dispose();
             Password = null;
             Name = null;
@@ -203,7 +216,6 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
         private async Task PasswordChangedFired(PasswordBox box)
         {
-            this._passwordBox = box;
             var passwordLength = box.SecurePassword.Length;
 
             Password = box.SecurePassword;

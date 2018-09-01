@@ -81,7 +81,8 @@
             </DockPanel>
             <DockPanel DockPanel.Dock="Top">
                 <Label Content="Password"></Label>
-                <PasswordBox Controls:PasswordBoxHelper.CapsLockWarningToolTip="CapsLock is on."
+                <PasswordBox x:Name="PasswordBoxLogin"
+                             Controls:PasswordBoxHelper.CapsLockWarningToolTip="CapsLock is on."
                              Controls:PasswordBoxHelper.RevealButtonContent="Clear"
                              Controls:TextBoxHelper.Watermark="Password"
                              Controls:TextBoxHelper.ClearTextButton="True">

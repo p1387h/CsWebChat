@@ -1,6 +1,7 @@
 ﻿using CsWebChat.WpfClient.LoginModule.Events;
 using CsWebChat.WpfClient.LoginModule.Models;
 using CsWebChat.WpfClient.LoginModule.Services;
+using CsWebChat.WpfClient.LoginModule.Views;
 using CsWebChat.WpfClient.Regions;
 using CsWebChat.WpfClient.WebLogicModule.Models;
 using Microsoft.Practices.Unity;
@@ -51,8 +52,6 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
             }
         }
 
-        // Reference to the PasswordBox in order to clear it when changing views.
-        private PasswordBox _passwordBox;
         public SecureString Password { get; set; }
         public List<string> ServerAddresses { get { return this._addressStorage.Servers; } }
 
@@ -187,10 +186,18 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
         private void RemoveLoginInformation()
         {
-            this._passwordBox?.SecurePassword?.Dispose();
-            if (this._passwordBox != null)
-                this._passwordBox.Password = null;
-            this._passwordBox = null;
+            var view = this._regionManager.Regions[LoginModuleRegionNames.TAB_REGION]
+                .Views
+                .OfType<LoginView>()
+                .SingleOrDefault();
+            var passwordBox = view?.PasswordBoxLogin;
+
+            if (passwordBox != null)
+            {
+                passwordBox.SecurePassword.Dispose();
+                passwordBox.Password = null;
+            }
+
             Password?.Dispose();
             Password = null;
             Name = null;
@@ -208,7 +215,6 @@ namespace CsWebChat.WpfClient.LoginModule.ViewModels
 
         private async Task PasswordChangedFired(PasswordBox box)
         {
-            this._passwordBox = box;
             Password = box.SecurePassword;
 
             // Ensure that the login button triggers accordingly.

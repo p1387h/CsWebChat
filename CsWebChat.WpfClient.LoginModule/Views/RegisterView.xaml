@@ -131,7 +131,8 @@
             <DockPanel DockPanel.Dock="Top">
                 <Label Content="Password"></Label>
                 <StackPanel>
-                    <PasswordBox Controls:PasswordBoxHelper.CapsLockWarningToolTip="CapsLock is on."
+                    <PasswordBox x:Name="PasswordBoxRegister"
+                                 Controls:PasswordBoxHelper.CapsLockWarningToolTip="CapsLock is on."
                                  Controls:PasswordBoxHelper.RevealButtonContent="Clear"
                                  Controls:TextBoxHelper.Watermark="Password"
                                  Controls:TextBoxHelper.ClearTextButton="True">
