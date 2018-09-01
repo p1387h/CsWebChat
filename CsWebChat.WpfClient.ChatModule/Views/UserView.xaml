@@ -5,7 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CsWebChat.WpfClient.ChatModule.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="250"
+             d:DesignHeight="450" d:DesignWidth="175"
+             
+             xmlns:design="clr-namespace:CsWebChat.WpfClient.ChatModule.Design"
+             d:DataContext="{design:DesignUserViewModel}"
              
              xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
              
@@ -13,7 +16,41 @@
              prism:ViewModelLocator.AutoWireViewModel="True"
              
              FontFamily="Verdana">
-    <Grid Background="White">
-        <TextBlock Text="UserView" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-    </Grid>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <!-- Accent and AppTheme setting -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate x:Key="UserTemplate">
+                <TextBlock Text="{Binding Name}"
+                           TextAlignment="Right"
+                           Margin="0,0,10,0">
+                </TextBlock>
+            </DataTemplate>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <DockPanel Background="White">
+        <DockPanel DockPanel.Dock="Top"
+                   Margin="10,10">
+            <TextBlock DockPanel.Dock="Left"
+                       Text="Other users online:">
+            </TextBlock>
+            <TextBlock DockPanel.Dock="Right"
+                       Text="{Binding Users.Count}"
+                       TextAlignment="Right">
+            </TextBlock>
+        </DockPanel>
+        <ListView DockPanel.Dock="Top"
+                  ItemsSource="{Binding Users}"
+                  ItemTemplate="{StaticResource UserTemplate}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        </ListView>
+    </DockPanel>
 </UserControl>

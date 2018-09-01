@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace CsWebChat.WpfClient.ChatModule.ViewModels
 {
@@ -64,17 +65,17 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
             this._connection.On<string, UserState>("NotifyUserStateChange", this.HandleStateChange);
         }
 
-        private void HandleStateChange(string name, UserState state)
+        private async void HandleStateChange(string name, UserState state)
         {
             if (state == UserState.Online)
             {
                 var newUser = new User() { Name = name };
-                Users.Add(newUser);
+                await Application.Current.Dispatcher.InvokeAsync(() => { Users.Add(newUser); });
             }
             else if (state == UserState.Offline)
             {
                 var toRemove = Users.FirstOrDefault(x => x.Name.Equals(name));
-                Users.Remove(toRemove);
+                await Application.Current.Dispatcher.InvokeAsync(() => { Users.Remove(toRemove); });
             }
         }
     }

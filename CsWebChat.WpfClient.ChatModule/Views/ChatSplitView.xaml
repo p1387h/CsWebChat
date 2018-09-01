@@ -15,7 +15,7 @@
              FontFamily="Verdana">
     <Grid Background="white">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"></ColumnDefinition>
+            <ColumnDefinition Width="175"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <UserControl Grid.Column="0"
