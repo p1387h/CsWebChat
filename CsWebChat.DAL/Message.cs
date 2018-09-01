@@ -12,6 +12,7 @@ namespace CsWebChat.DAL
         public User Sender { get; set; }
         public User Receiver { get; set; }
         public DateTime TimeSent { get; set; }
+        public string Content { get; set; }
 
         public string SenderName { get; set; }
         public string ReceiverName { get; set; }

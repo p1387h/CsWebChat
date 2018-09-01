@@ -29,7 +29,7 @@ namespace CsWebChat.Server.Ws
             this._logger = logger;
 
             // AutoMapper configuration:
-            var mapperConfig = new MapperConfiguration((config) => 
+            var mapperConfig = new MapperConfiguration((config) =>
             {
                 config.CreateMap<User, DAL.User>();
                 config.CreateMap<DAL.User, User>();
@@ -58,25 +58,35 @@ namespace CsWebChat.Server.Ws
             return base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SendMessageTo(string userName, Message message)
+        public async Task SendMessageTo(string userName, string content)
         {
             try
             {
-                var id = this._mappedConnectionIds[userName];
-                var client = Clients.Client(id);
+                var receiverId = this._mappedConnectionIds[userName];
+                var receiverClient = Clients.Client(receiverId);
+                var receiver = new User() { Name = userName };
+
                 var senderName = Context.User.Identity.Name;
                 var sender = new User() { Name = senderName };
 
-                if(client != null)
+                if (receiverClient != null)
                 {
+                    var message = new Message()
+                    {
+                        Receiver = receiver,
+                        Sender = sender,
+                        TimeSent = DateTime.Now,
+                        Content = content
+                    };
                     var messageDb = this._mapper.Map<DAL.Message>(message);
 
-                    await client.ReceiveMessageAsync(sender, message);
+                    await receiverClient.ReceiveMessageAsync(message);
 
                     this._db.Message.Add(messageDb);
                     await this._db.SaveChangesAsync();
                 }
-            } catch(KeyNotFoundException e)
+            }
+            catch (KeyNotFoundException e)
             {
                 this._logger.LogError(e, String.Format("User '{0}' not found.", userName));
             }

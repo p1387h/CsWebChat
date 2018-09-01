@@ -8,6 +8,6 @@ namespace CsWebChat.Server.Ws
 {
     public interface IClient
     {
-        Task ReceiveMessageAsync(User sender, Message message);
+        Task ReceiveMessageAsync(Message message);
     }
 }

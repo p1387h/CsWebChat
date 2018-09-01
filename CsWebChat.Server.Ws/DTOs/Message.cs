@@ -9,5 +9,6 @@ namespace CsWebChat.Server.Ws.DTOs
         public User Sender { get; set; }
         public User Receiver { get; set; }
         public DateTime TimeSent { get; set; }
+        public string Content { get; set; }
     }
 }
