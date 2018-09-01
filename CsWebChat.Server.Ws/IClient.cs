@@ -10,5 +10,6 @@ namespace CsWebChat.Server.Ws
     {
         Task ReceiveMessageAsync(Message message);
         Task NotifyUsersStateChangesAsync(IEnumerable<string> usernames, UserState state);
+        Task PongAsync();
     }
 }

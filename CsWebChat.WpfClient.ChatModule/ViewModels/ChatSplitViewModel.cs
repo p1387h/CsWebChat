@@ -22,6 +22,9 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
         private readonly ILoggerFacade _logger;
         private readonly HubConnection _connection;
 
+        private bool _tryConnecting = true;
+        private TimeSpan _reconnectTime = TimeSpan.FromSeconds(10);
+
         public ChatSplitViewModel(IRegionManager regionManager, IEventAggregator eventAggregator,
             ILoggerFacade logger, HubConnection connection)
         {
@@ -39,19 +42,40 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
             this._regionManager.Regions[MainWindowRegionNames.MAIN_REGION].Context = connection;
 
             this._connection.Closed += this.WebsocketConnectionLost;
+            this._connection.On("PongAsync", this.HandleResponse);
         }
 
         private async Task WebsocketConnectionLost(Exception exception)
         {
             this._eventAggregator.GetEvent<WebsocketConnectionStateEvent>()
                 .Publish(WebSocketState.Closed);
-            await this.ConnectTotWebsocket();
+            await this.TryConnectingToWebsocket();
         }
 
-        private async Task ConnectTotWebsocket()
+        private void HandleResponse()
         {
-            await this._connection.StartAsync()
-                .ContinueWith((t) => { this._eventAggregator.GetEvent<WebsocketConnectionStateEvent>().Publish(WebSocketState.Open); });
+            this._tryConnecting = false;
+            this._eventAggregator.GetEvent<WebsocketConnectionStateEvent>().Publish(WebSocketState.Open);
+        }
+
+        private async Task TryConnectingToWebsocket()
+        {
+            this._tryConnecting = true;
+
+            while(this._tryConnecting)
+            {
+                try
+                {
+                    await this._connection.StartAsync()
+                        .ContinueWith((t) => { this._connection.InvokeAsync("Ping"); });
+                    await Task.Delay(this._reconnectTime);
+                }
+                catch
+                {
+                    this._eventAggregator.GetEvent<WebsocketConnectionStateEvent>()
+                        .Publish(WebSocketState.Closed);
+                }
+            }
         }
 
 
@@ -65,7 +89,7 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
         // INavigationAware:
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            Task.Run(async () => { await this.ConnectTotWebsocket(); });
+            Task.Run(async () => { await this.TryConnectingToWebsocket(); });
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
@@ -82,6 +106,7 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
             {
                 await this._connection.StopAsync();
                 this._connection.Closed -= this.WebsocketConnectionLost;
+                this._tryConnecting = false;
             });
         }
     }

@@ -124,5 +124,10 @@ namespace CsWebChat.Server.Ws
 
             await this.Clients.Caller.NotifyUsersStateChangesAsync(otherUserNames, UserState.Online);
         }
+
+        public async Task Ping()
+        {
+            await Clients.Caller.PongAsync();
+        }
     }
 }
