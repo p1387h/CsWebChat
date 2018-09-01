@@ -161,6 +161,7 @@
   <ItemGroup>
     <Compile Include="ChatModule.cs" />
     <Compile Include="Design\DesignChatViewModel.cs" />
+    <Compile Include="Events\WebsocketConnectionStateEvent.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
