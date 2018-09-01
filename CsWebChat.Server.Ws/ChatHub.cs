@@ -46,8 +46,16 @@ namespace CsWebChat.Server.Ws
             var name = Context.User.Identity.Name;
             var id = Context.ConnectionId;
 
-            this._chatHubStorage.MappedConnectionIds.Add(name, id);
-            this.Clients.Others.NotifyUsersStateChangesAsync(new List<string>() { name }, UserState.Online);
+            if(!this._chatHubStorage.MappedConnectionIds.ContainsKey(name))
+            {
+                this._chatHubStorage.MappedConnectionIds[name] = new List<string>();
+            }
+            this._chatHubStorage.MappedConnectionIds[name].Add(id);
+
+            // Make sure only to notify users with different names!
+            this.Clients
+                .AllExcept(this._chatHubStorage.MappedConnectionIds[name])
+                .NotifyUsersStateChangesAsync(new List<string>() { name }, UserState.Online);
 
             return base.OnConnectedAsync();
         }
@@ -55,9 +63,17 @@ namespace CsWebChat.Server.Ws
         public override Task OnDisconnectedAsync(Exception exception)
         {
             var name = Context.User.Identity.Name;
+            var id = Context.ConnectionId;
 
-            this._chatHubStorage.MappedConnectionIds.Remove(name);
-            this.Clients.Others.NotifyUsersStateChangesAsync(new List<string>() { name }, UserState.Offline);
+            this._chatHubStorage.MappedConnectionIds[name].Remove(id);
+
+            if(!this._chatHubStorage.MappedConnectionIds[name].Any())
+            {
+                this._chatHubStorage.MappedConnectionIds.Remove(name);
+                // Others can be used since it was the last connection of the
+                // user.
+                this.Clients.Others.NotifyUsersStateChangesAsync(new List<string>() { name }, UserState.Offline);
+            }
 
             return base.OnDisconnectedAsync(exception);
         }
@@ -66,29 +82,31 @@ namespace CsWebChat.Server.Ws
         {
             try
             {
-                var receiverId = this._chatHubStorage.MappedConnectionIds[userName];
-                var receiverClient = Clients.Client(receiverId);
                 var receiver = new User() { Name = userName };
-
+                var receiverIds = this._chatHubStorage.MappedConnectionIds[userName];
                 var senderName = Context.User.Identity.Name;
                 var sender = new User() { Name = senderName };
-
-                if (receiverClient != null)
+                var message = new Message()
                 {
-                    var message = new Message()
+                    Receiver = receiver,
+                    Sender = sender,
+                    TimeSent = DateTime.Now,
+                    Content = content
+                };
+
+                foreach (var receiverId in receiverIds)
+                {
+                    var receiverClient = Clients.Client(receiverId);
+
+                    if (receiverClient != null)
                     {
-                        Receiver = receiver,
-                        Sender = sender,
-                        TimeSent = DateTime.Now,
-                        Content = content
-                    };
-                    var messageDb = this._mapper.Map<DAL.Message>(message);
-
-                    await receiverClient.ReceiveMessageAsync(message);
-
-                    this._db.Message.Add(messageDb);
-                    await this._db.SaveChangesAsync();
+                        await receiverClient.ReceiveMessageAsync(message);
+                    }
                 }
+
+                var messageDb = this._mapper.Map<DAL.Message>(message);
+                this._db.Message.Add(messageDb);
+                await this._db.SaveChangesAsync();
             }
             catch (KeyNotFoundException e)
             {
