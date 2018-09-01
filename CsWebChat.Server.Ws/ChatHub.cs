@@ -45,6 +45,7 @@ namespace CsWebChat.Server.Ws
             var id = Context.ConnectionId;
 
             this._mappedConnectionIds.Add(name, id);
+            this.Clients.Others.NotifyUserStateChange(name, UserState.Online);
 
             return base.OnConnectedAsync();
         }
@@ -54,6 +55,7 @@ namespace CsWebChat.Server.Ws
             var name = Context.User.Identity.Name;
 
             this._mappedConnectionIds.Remove(name);
+            this.Clients.Others.NotifyUserStateChange(name, UserState.Offline);
 
             return base.OnDisconnectedAsync(exception);
         }

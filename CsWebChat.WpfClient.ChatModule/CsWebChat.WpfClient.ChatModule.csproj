@@ -160,6 +160,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatModule.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\UserState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
