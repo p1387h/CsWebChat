@@ -13,7 +13,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace CsWebChat.WpfClient.ChatModule.ViewModels
 {
@@ -26,14 +28,19 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
             set { SetProperty<ObservableCollection<Message>>(ref _messages, value); }
         }
 
-        private string _message;
+        private string this_message;
         public string Message
         {
-            get { return _message; }
-            set { SetProperty<string>(ref _message, value); }
+            get { return this_message; }
+            set { SetProperty<string>(ref this_message, value); }
         }
 
-        public string ChatPartnerName { get; private set; }
+        private string _chatPartnerName;
+        public string ChatPartnerName
+        {
+            get { return _chatPartnerName; }
+            private set { SetProperty<string>(ref _chatPartnerName, value); }
+        }
 
         public ICommand ButtonSend { get; set; }
 
@@ -56,23 +63,23 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
             this._logger = logger;
             this._regionManager = regionManager;
 
-            this.Messages = new ObservableCollection<Message>();
+            Messages = new ObservableCollection<Message>();
 
-            this.ButtonSend = new DelegateCommand(async () => { await this.ButtonSendClicked(); });
+            ButtonSend = new DelegateCommand(async () => { await this.ButtonSendClicked(); });
         }
 
         private async Task ButtonSendClicked()
         {
-            if(!string.IsNullOrEmpty(_message))
+            if(!string.IsNullOrEmpty(Message) && ChatPartnerName != null)
             {
-                await this._connection.SendAsync("SendMessageTo", this.ChatPartnerName, this.Message);
+                await this._connection.SendAsync("SendMessageTo", ChatPartnerName, Message);
                 this.Message = null;
             }
         }
 
         private void HandleReceiveMessage(Message message)
         {
-            this.Messages.Add(message);
+            Application.Current.Dispatcher.Invoke(() => { Messages.Add(message); });
         }
 
 
@@ -81,7 +88,7 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
         {
             // Keep the views for existing partners.
             var partnerName = navigationContext.Parameters["partnerName"];
-            return this.ChatPartnerName != null && this.ChatPartnerName.Equals(partnerName);
+            return ChatPartnerName != null && ChatPartnerName.Equals(partnerName);
         }
 
         public void OnNavigatedFrom(NavigationContext navigationContext)
@@ -91,7 +98,7 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            this.ChatPartnerName = navigationContext.Parameters["partnerName"] as string;
+            ChatPartnerName = navigationContext.Parameters["partnerName"] as string;
             this._connection = (HubConnection)this._regionManager.Regions[MainWindowRegionNames.MAIN_REGION].Context;
             this._connection.On<Message>("ReceiveMessageAsync", this.HandleReceiveMessage);
         }

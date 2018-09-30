@@ -82,9 +82,10 @@ namespace CsWebChat.Server.Ws
         {
             try
             {
+                var senderName = Context.User.Identity.Name;
                 var receiver = new User() { Name = userName };
                 var receiverIds = this._chatHubStorage.MappedConnectionIds[userName];
-                var senderName = Context.User.Identity.Name;
+                var senderIds = this._chatHubStorage.MappedConnectionIds[senderName];
                 var sender = new User() { Name = senderName };
                 var message = new Message()
                 {
@@ -93,10 +94,12 @@ namespace CsWebChat.Server.Ws
                     TimeSent = DateTime.Now,
                     Content = content
                 };
+                // Both the sender and target receive the message.
+                var targets = receiverIds.Concat(senderIds);
 
-                foreach (var receiverId in receiverIds)
+                foreach (var target in targets)
                 {
-                    var receiverClient = Clients.Client(receiverId);
+                    var receiverClient = Clients.Client(target);
 
                     if (receiverClient != null)
                     {
@@ -105,6 +108,8 @@ namespace CsWebChat.Server.Ws
                 }
 
                 var messageDb = this._mapper.Map<DAL.Message>(message);
+                this._db.User.Attach(messageDb.Receiver);
+                this._db.User.Attach(messageDb.Sender);
                 this._db.Message.Add(messageDb);
                 await this._db.SaveChangesAsync();
             }

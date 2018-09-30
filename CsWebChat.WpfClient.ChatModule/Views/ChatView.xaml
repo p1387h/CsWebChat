@@ -36,6 +36,16 @@
     </UserControl.Resources>
     <DockPanel Background="White"
                Margin="4">
+        <DockPanel.Style>
+            <Style TargetType="DockPanel">
+                <Setter Property="Visibility" Value="Visible"></Setter>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding ChatPartnerName}" Value="{x:Null}">
+                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </DockPanel.Style>
         <DockPanel DockPanel.Dock="Bottom">
             <TextBlock DockPanel.Dock="Left"
                        Text="Message: "
@@ -44,10 +54,10 @@
             </TextBlock>
             <Button DockPanel.Dock="Right"
                     Content="Send"
-                    Style="{StaticResource SquareButtonStyle}"
                     Width="100"
                     Margin="4,0,0,0"
-                    Command="{Binding ButtonSend}">
+                    Command="{Binding ButtonSend}"
+                    Style="{StaticResource SquareButtonStyle}">
             </Button>
             <TextBox TextWrapping="NoWrap"
                      Text="{Binding Message}">
