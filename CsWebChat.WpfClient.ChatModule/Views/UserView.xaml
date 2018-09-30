@@ -32,10 +32,19 @@
 
             <converter:ConnectionStateStringConverter x:Key="ConnectionStateConverter"></converter:ConnectionStateStringConverter>
             <DataTemplate x:Key="UserTemplate">
-                <TextBlock Text="{Binding Name}"
+                <Button MinHeight="0"
+                        Command="{Binding Path=DataContext.ButtonUserName, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"
+                        CommandParameter="{Binding Name}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <ContentPresenter></ContentPresenter>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <TextBlock Text="{Binding Name}"
                            TextAlignment="Right"
                            Margin="0,0,10,0">
-                </TextBlock>
+                    </TextBlock>
+                </Button>
             </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>

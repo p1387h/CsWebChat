@@ -8,17 +8,48 @@ using System.Threading.Tasks;
 
 namespace CsWebChat.WpfClient.ChatModule.Design
 {
-    class DesignUserViewModel
+    class DesignChatViewModel
     {
-        public ObservableCollection<User> Users { get; set; }
+        public ObservableCollection<Message> Messages { get; set; }
+        public string ChatPartnerName { get; private set; }
 
-        public DesignUserViewModel()
+        private string _ownName = "User";
+
+        public DesignChatViewModel()
         {
-            Users = new ObservableCollection<User>();
-            Users.AddRange(new User[] {
-                new User() { Name = "TestUserOne" },
-                new User() { Name = "TestUserTwo" }
-            });
+            this.ChatPartnerName = "Testpartner";
+
+            this.Messages = new ObservableCollection<Message>()
+            {
+                new Message()
+                {
+                    Content = "Testmessage1",
+                    MessageId = 1,
+                    TimeSent = DateTime.MinValue,
+                    Sender = new User()
+                    {
+                        Name = this.ChatPartnerName
+                    },
+                    Receiver = new User()
+                    {
+                        Name = this._ownName
+                    }
+                },
+                new Message()
+                {
+                    Content = "Testmessage2",
+                    MessageId = 2,
+                    TimeSent = DateTime.MinValue,
+                    Sender = new User()
+                    {
+                        Name = this._ownName
+                    },
+                    Receiver = new User()
+                    {
+                        Name = this.ChatPartnerName
+                    }
+                }
+            };
         }
     }
 }

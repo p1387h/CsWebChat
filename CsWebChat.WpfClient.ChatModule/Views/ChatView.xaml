@@ -7,6 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="625"
              
+             xmlns:design="clr-namespace:CsWebChat.WpfClient.ChatModule.Design"
+             d:DataContext="{design:DesignChatViewModel}"
+             
              xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
              
              xmlns:prism="http://prismlibrary.com/"
@@ -24,9 +27,34 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            
+            <!-- Template for chat messages. -->
+            <DataTemplate x:Key="MessageTemplate">
+                <TextBlock Text="{Binding Content}"></TextBlock>
+            </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid Background="White">
-        <TextBlock Text="Chat" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
-    </Grid>
+    <DockPanel Background="White"
+               Margin="4">
+        <DockPanel DockPanel.Dock="Bottom">
+            <TextBlock DockPanel.Dock="Left"
+                       Text="Message: "
+                       VerticalAlignment="Center"
+                       Margin="0,0,4,0">
+            </TextBlock>
+            <Button DockPanel.Dock="Right"
+                    Content="Send"
+                    Style="{StaticResource SquareButtonStyle}"
+                    Width="100"
+                    Margin="4,0,0,0"
+                    Command="{Binding ButtonSend}">
+            </Button>
+            <TextBox TextWrapping="NoWrap"
+                     Text="{Binding Message}">
+            </TextBox>
+        </DockPanel>
+        <ListView ItemsSource="{Binding Messages}"
+                  ItemTemplate="{StaticResource MessageTemplate}">
+        </ListView>
+    </DockPanel>
 </UserControl>

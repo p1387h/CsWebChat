@@ -1,8 +1,10 @@
 ﻿using CsWebChat.WpfClient.ChatModule.Events;
 using CsWebChat.WpfClient.ChatModule.Models;
+using CsWebChat.WpfClient.ChatModule.Views;
 using CsWebChat.WpfClient.Regions;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Practices.Unity;
+using Prism.Commands;
 using Prism.Events;
 using Prism.Logging;
 using Prism.Mvvm;
@@ -15,6 +17,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace CsWebChat.WpfClient.ChatModule.ViewModels
 {
@@ -33,6 +36,8 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
             get { return _connectionState; }
             set { SetProperty<ConnectionState>(ref _connectionState, value); }
         }
+
+        public ICommand ButtonUserName { get; set; }
 
         private HubConnection _connection;
 
@@ -57,6 +62,8 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
 
             this._eventAggregator.GetEvent<WebsocketConnectionStateEvent>()
                 .Subscribe(this.HandleWebsocketConnectionStateEvent, ThreadOption.BackgroundThread);
+
+            this.ButtonUserName = new DelegateCommand<string>(this.ButtonUserNameClicked);
         }
 
         private async void HandleWebsocketConnectionStateEvent(WebSocketState state)
@@ -71,6 +78,16 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
                 ConnectionState = ConnectionState.Disconnected;
                 await Application.Current.Dispatcher.InvokeAsync(() => { Users.Clear(); });
             }
+        }
+
+        private void ButtonUserNameClicked(string userName)
+        {
+            var navigationParameters = new NavigationParameters();
+            navigationParameters.Add("partnerName", userName);
+
+            this._regionManager.RequestNavigate(ChatModuleRegionNames.CHAT_REGION,
+                new Uri(nameof(ChatView), UriKind.Relative),
+                navigationParameters);
         }
 
 

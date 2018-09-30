@@ -36,6 +36,8 @@ namespace CsWebChat.WpfClient.ChatModule
 
         private void InitializeServices()
         {
+            // InjectionFactory is used since the instantiation of a connection hub
+            // requires varioues specific settings.
             this._container.RegisterType<HubConnection>(new InjectionFactory(this.HubConnectionFactoryFunction));
 
             // Views registered for the possibility of INavigationAware returning false and
