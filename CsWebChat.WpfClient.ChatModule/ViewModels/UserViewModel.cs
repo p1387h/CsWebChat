@@ -37,7 +37,7 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
             set { SetProperty<ConnectionState>(ref _connectionState, value); }
         }
 
-        public ICommand ButtonUserName { get; set; }
+        public ICommand ListItemUserName { get; set; }
 
         private HubConnection _connection;
 
@@ -63,7 +63,7 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
             this._eventAggregator.GetEvent<WebsocketConnectionStateEvent>()
                 .Subscribe(this.HandleWebsocketConnectionStateEvent, ThreadOption.BackgroundThread);
 
-            this.ButtonUserName = new DelegateCommand<string>(this.ButtonUserNameClicked);
+            this.ListItemUserName = new DelegateCommand<string>(this.ListItemUserNameClicked);
         }
 
         private async void HandleWebsocketConnectionStateEvent(WebSocketState state)
@@ -80,7 +80,7 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
             }
         }
 
-        private void ButtonUserNameClicked(string userName)
+        private void ListItemUserNameClicked(string userName)
         {
             var navigationParameters = new NavigationParameters();
             navigationParameters.Add("partnerName", userName);

@@ -10,6 +10,8 @@
              xmlns:design="clr-namespace:CsWebChat.WpfClient.ChatModule.Design"
              d:DataContext="{design:DesignUserViewModel}"
              
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactivity"
+             
              xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
              
              xmlns:prism="http://prismlibrary.com/"
@@ -32,19 +34,22 @@
 
             <converter:ConnectionStateStringConverter x:Key="ConnectionStateConverter"></converter:ConnectionStateStringConverter>
             <DataTemplate x:Key="UserTemplate">
-                <Button MinHeight="0"
-                        Command="{Binding Path=DataContext.ButtonUserName, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"
-                        CommandParameter="{Binding Name}">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <ContentPresenter></ContentPresenter>
-                        </ControlTemplate>
-                    </Button.Template>
-                    <TextBlock Text="{Binding Name}"
+                <TextBlock Text="{Binding Name}"
                            TextAlignment="Right"
                            Margin="0,0,10,0">
-                    </TextBlock>
-                </Button>
+                    <ei:Interaction.Triggers>
+                        <!-- 
+                        Selected is fired from the ListViewItem when it is selected by the User.
+                        The Command is bound to the ViewModel of the whole view in order to 
+                        allow a centralized use of commands.
+                        -->
+                        <ei:EventTrigger EventName="Selected" SourceObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}, Mode=FindAncestor}}">
+                            <ei:InvokeCommandAction Command="{Binding Path=DataContext.ListItemUserName, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"
+                                                    CommandParameter="{Binding Name}">
+                            </ei:InvokeCommandAction>
+                        </ei:EventTrigger>
+                    </ei:Interaction.Triggers>
+                </TextBlock>
             </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
