@@ -14,6 +14,8 @@
              
              xmlns:ei="http://schemas.microsoft.com/expression/2010/interactivity"
              
+             xmlns:validators="clr-namespace:CsWebChat.WpfClient.LoginModule.Validators"
+             
              FontFamily="Verdana">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -74,9 +76,18 @@
             </DockPanel.Resources>
             <DockPanel DockPanel.Dock="Top">
                 <Label Content="Name"></Label>
-                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                         Controls:TextBoxHelper.Watermark="Name"
-                         Controls:TextBoxHelper.ClearTextButton="True">
+                <TextBox Controls:TextBoxHelper.Watermark="Name"
+                         Controls:TextBoxHelper.ClearTextButton="True"
+                         x:Name="TextBoxName">
+                    <TextBox.Text>
+                        <Binding Path="Name" 
+                                 UpdateSourceTrigger="PropertyChanged" 
+                                 Mode="TwoWay">
+                            <Binding.ValidationRules>
+                                <validators:UserNameValidationRule></validators:UserNameValidationRule>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
                 </TextBox>
             </DockPanel>
             <DockPanel DockPanel.Dock="Top">
@@ -115,9 +126,13 @@
                     <Style TargetType="Button" BasedOn="{StaticResource SquareButtonStyle}">
                         <Setter Property="IsEnabled" Value="False"></Setter>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding EnableLoginButton}" Value="True">
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding EnableLoginButton}" Value="True"></Condition>
+                                    <Condition Binding="{Binding ElementName=TextBoxName, Path=(Validation.HasError)}" Value="False"></Condition>
+                                </MultiDataTrigger.Conditions>
                                 <Setter Property="IsEnabled" Value="True"></Setter>
-                            </DataTrigger>
+                            </MultiDataTrigger>
                         </Style.Triggers>
                     </Style>
                 </Button.Style>
