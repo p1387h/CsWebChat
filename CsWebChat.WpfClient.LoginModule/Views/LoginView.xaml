@@ -78,6 +78,7 @@
                 <Label Content="Name"></Label>
                 <TextBox Controls:TextBoxHelper.Watermark="Name"
                          Controls:TextBoxHelper.ClearTextButton="True"
+                         Style="{StaticResource MetroTextBox}"
                          x:Name="TextBoxName">
                     <TextBox.Text>
                         <Binding Path="Name" 

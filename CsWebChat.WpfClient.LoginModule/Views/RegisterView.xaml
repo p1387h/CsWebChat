@@ -29,36 +29,6 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- Custom style for TextBoxes using a ErrorTemplate -->
-            <Style x:Key="TextBoxErrorStyle" 
-                   BasedOn="{StaticResource MetroTextBox}" 
-                   TargetType="TextBox">
-                <Setter Property="Validation.ErrorTemplate">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <StackPanel>
-                                <DockPanel>
-                                    <AdornedElementPlaceholder x:Name="Placeholder"></AdornedElementPlaceholder>
-                                    <!-- Hacky way of keeping the width of the Border element the same as the adornment one -->
-                                    <TextBlock></TextBlock>
-                                </DockPanel>
-                                <TextBlock FontSize="10" 
-                                           Foreground="Red"
-                                           Margin="0,2,0,0"
-                                           Text="{Binding ElementName=Placeholder, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}"
-                                           TextWrapping="Wrap">
-                                </TextBlock>
-                            </StackPanel>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-                <Style.Triggers>
-                    <Trigger Property="Validation.HasError" Value="True">
-                        <Setter Property="Margin" Value="0,2,0,16">
-                        </Setter>
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
             <!-- Custom DataTemplate for simple error messages -->
             <DataTemplate x:Key="ErrorMessageTemplate">
                 <TextBlock Text="{Binding}"
@@ -115,7 +85,7 @@
                 <Label Content="Name"></Label>
                 <TextBox Controls:TextBoxHelper.Watermark="Name"
                          Controls:TextBoxHelper.ClearTextButton="True"
-                         Style="{StaticResource TextBoxErrorStyle}"
+                         Style="{StaticResource MetroTextBox}"
                          x:Name="TextBoxName">
                     <TextBox.Text>
                         <Binding Path="Name" 
