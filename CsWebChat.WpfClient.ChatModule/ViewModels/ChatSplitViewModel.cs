@@ -1,4 +1,5 @@
 ﻿using CsWebChat.WpfClient.ChatModule.Events;
+using CsWebChat.WpfClient.ChatModule.Models;
 using CsWebChat.WpfClient.ChatModule.Views;
 using CsWebChat.WpfClient.Regions;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -43,6 +44,7 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
 
             this._connection.Closed += this.WebsocketConnectionLost;
             this._connection.On("PongAsync", this.HandleResponse);
+            this._connection.On<Message>("ReceiveMessageAsync", this.HandleReceiveMessage);
         }
 
         private async Task WebsocketConnectionLost(Exception exception)
@@ -56,6 +58,12 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
         {
             this._tryConnecting = false;
             this._eventAggregator.GetEvent<WebsocketConnectionStateEvent>().Publish(WebSocketState.Open);
+        }
+
+        private void HandleReceiveMessage(Message message)
+        {
+            this._eventAggregator.GetEvent<MessageReceivedEvent>()
+                .Publish(message);
         }
 
         private async Task TryConnectingToWebsocket()

@@ -163,6 +163,7 @@
     <Compile Include="Converter\ConnectionStateStringConverter.cs" />
     <Compile Include="Design\DesignChatViewModel.cs" />
     <Compile Include="Design\DesignUserViewModel.cs" />
+    <Compile Include="Events\MessageReceivedEvent.cs" />
     <Compile Include="Events\WebsocketConnectionStateEvent.cs" />
     <Compile Include="Models\ConnectionState.cs" />
     <Compile Include="Models\Message.cs" />

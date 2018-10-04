@@ -1,4 +1,5 @@
-﻿using CsWebChat.WpfClient.ChatModule.Models;
+﻿using CsWebChat.WpfClient.ChatModule.Events;
+using CsWebChat.WpfClient.ChatModule.Models;
 using CsWebChat.WpfClient.Regions;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Practices.Unity;
@@ -57,7 +58,7 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
             if (container == null || eventAggregator == null
                 || logger == null || regionManager == null)
                 throw new ArgumentException();
-            
+
             this._container = container;
             this._eventAggregator = eventAggregator;
             this._logger = logger;
@@ -66,20 +67,29 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
             Messages = new ObservableCollection<Message>();
 
             ButtonSend = new DelegateCommand(async () => { await this.ButtonSendClicked(); });
+
+            this._eventAggregator.GetEvent<MessageReceivedEvent>()
+                .Subscribe(this.MessageReceivedEventHandler, ThreadOption.UIThread, false, this.MessageReceivedEventFilter);
         }
 
         private async Task ButtonSendClicked()
         {
-            if(!string.IsNullOrEmpty(Message) && ChatPartnerName != null)
+            if (!string.IsNullOrEmpty(Message) && ChatPartnerName != null)
             {
                 await this._connection.SendAsync("SendMessageTo", ChatPartnerName, Message);
                 this.Message = null;
             }
         }
 
-        private void HandleReceiveMessage(Message message)
+        private void MessageReceivedEventHandler(Message message)
         {
-            Application.Current.Dispatcher.Invoke(() => { Messages.Add(message); });
+            Messages.Add(message);
+        }
+
+        private bool MessageReceivedEventFilter(Message message)
+        {
+            return !String.IsNullOrEmpty(ChatPartnerName)
+                && (message.Sender.Name.Equals(ChatPartnerName) || message.Receiver.Name.Equals(ChatPartnerName));
         }
 
 
@@ -93,14 +103,13 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
 
         public void OnNavigatedFrom(NavigationContext navigationContext)
         {
-            
+
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
             ChatPartnerName = navigationContext.Parameters["partnerName"] as string;
             this._connection = (HubConnection)this._regionManager.Regions[MainWindowRegionNames.MAIN_REGION].Context;
-            this._connection.On<Message>("ReceiveMessageAsync", this.HandleReceiveMessage);
         }
     }
 }
