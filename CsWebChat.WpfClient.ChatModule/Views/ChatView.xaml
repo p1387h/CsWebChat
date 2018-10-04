@@ -27,10 +27,34 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
+
             <!-- Template for chat messages. -->
             <DataTemplate x:Key="MessageTemplate">
-                <TextBlock Text="{Binding Content}"></TextBlock>
+                <Border Padding="10"
+                        Margin="4"
+                        Width="400"
+                        CornerRadius="8">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="HorizontalAlignment" Value="Right"></Setter>
+                            <Setter Property="Background" Value="{StaticResource AccentColorBrush}"></Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsFromChatPartner}" Value="True">
+                                    <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+                                    <Setter Property="Background" Value="{StaticResource AccentColorBrush3}"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <TextBlock TextWrapping="Wrap">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} : {1}">
+                                <Binding Path="TimeSent"></Binding>
+                                <Binding Path="Content"></Binding>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Border>
             </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>

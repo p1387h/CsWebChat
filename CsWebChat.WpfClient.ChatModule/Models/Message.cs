@@ -13,5 +13,7 @@ namespace CsWebChat.WpfClient.ChatModule.Models
         public User Receiver { get; set; }
         public DateTime TimeSent { get; set; }
         public string Content { get; set; }
+
+        public bool IsFromChatPartner { get; set; }
     }
 }

@@ -83,6 +83,12 @@ namespace CsWebChat.WpfClient.ChatModule.ViewModels
 
         private void MessageReceivedEventHandler(Message message)
         {
+            // Ensure the correct representation in the view.
+            if(message.Sender.Name.Equals(ChatPartnerName))
+            {
+                message.IsFromChatPartner = true;
+            }
+
             Messages.Add(message);
         }
 

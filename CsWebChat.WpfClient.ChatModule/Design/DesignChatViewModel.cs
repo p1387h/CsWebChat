@@ -33,7 +33,8 @@ namespace CsWebChat.WpfClient.ChatModule.Design
                     Receiver = new User()
                     {
                         Name = this._ownName
-                    }
+                    },
+                    IsFromChatPartner = true
                 },
                 new Message()
                 {
